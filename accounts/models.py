@@ -4,9 +4,8 @@ from django.urls import reverse
 from django.conf import settings
 from django.utils import timezone
 from django.core.validators import RegexValidator
-from django.contrib.auth.models import AbstractBaseUser
-from django.contrib.auth.models import PermissionsMixin
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
 from .managers import CustomUserManager
 
@@ -39,19 +38,34 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class Profile(models.Model):
 
+    # mandatory fields
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True
+    )
     phone_regex = RegexValidator(
         regex=r"^\+?1?\d{9,15}$",
         message="Phone number must be entered in the format: '+999999999'.\nAt most 15 digits are allowed.",
     )
+    phone_no = models.CharField(validators=[phone_regex], max_length=17)
 
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True
+    # optional fields
+    org_name = models.CharField(_("Organization"), max_length=255, blank=True)
+    address = models.TextField(_("Address"), blank=True)
+    bank_name = models.CharField(_("Associated Bank Name"), max_length=512, blank=True)
+    bank_acc = models.CharField(_("Bank Account No"), max_length=24, blank=True)
+
+    # license fields
+    LICENSE_CHOICES = (
+        ("free", "Free"),
+        ("trial", "Trial"),
+        ("pro", "Pro"),
     )
-    phone_no = models.CharField(validators=[phone_regex], max_length=17, blank=True)
-    org_name = models.CharField(_("Organization"), max_length=255)
-    address = models.TextField(_("Address"))
-    bank_name = models.CharField(_("Associated Bank Name"), max_length=512)
-    bank_acc = models.CharField(_("Bank Account No"), max_length=24)
+    license_type = models.CharField(
+        _("License Type"), max_length=10, choices=LICENSE_CHOICES, default="free"
+    )
+    license_price = models.PositiveIntegerField(_("License Price"), default=0)
+    license_iat = models.DateTimeField(_("License Issued at"), auto_now_add=True)
+    license_duration = models.DurationField(_("License Duration"), null=True)
 
     class Meta:
         verbose_name = _("Profile")

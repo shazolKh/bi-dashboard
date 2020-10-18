@@ -16,18 +16,21 @@ class CustomUserAdmin(UserAdmin):
         "created_at",
         "is_staff",
         "is_active",
+        "is_superuser",
     )
     list_filter = (
         "is_staff",
         "is_active",
     )
+    # fields on user change form
     fieldsets = (
-        (None, {"fields": ("name", "email", "password")}),
+        ("Information", {"fields": ("name", "email", "password")}),
         ("Permissions", {"fields": ("is_staff", "is_active")}),
     )
+    # fields on user add form
     add_fieldsets = (
         (
-            None,
+            "Information",
             {
                 "classes": ("wide",),
                 "fields": (
@@ -55,27 +58,86 @@ class ProfileAdmin(admin.ModelAdmin):
     model = Profile
 
     list_display = (
-        "get_name",
         "get_email",
         "phone_no",
         "org_name",
         "bank_name",
         "bank_acc",
+        "license_type",
+        "license_iat",
+        "license_duration",
     )
 
-    search_fields = (
-        "user__name",
-        "user__email",
+    fieldsets = (
+        (
+            "Identification",
+            {
+                "fields": (
+                    "user",
+                    "phone_no",
+                )
+            },
+        ),
+        (
+            "General Information",
+            {
+                "fields": (
+                    "address",
+                    "org_name",
+                    "bank_name",
+                    "bank_acc",
+                )
+            },
+        ),
+        (
+            "Lincense Information",
+            {
+                "fields": (
+                    "license_type",
+                    "license_price",
+                    "license_duration",
+                )
+            },
+        ),
     )
+    add_fieldsets = (
+        (
+            "Identification",
+            {
+                "fields": (
+                    "user",
+                    "phone_no",
+                )
+            },
+        ),
+        (
+            "General Information",
+            {
+                "fields": (
+                    "address",
+                    "org_name",
+                    "bank_name",
+                    "bank_acc",
+                )
+            },
+        ),
+        (
+            "Lincense Information",
+            {
+                "fields": (
+                    "license_type",
+                    "license_price",
+                    "license_duration",
+                )
+            },
+        ),
+    )
+
+    search_fields = ("user__email",)
 
     ordering = [
         "-user__created_at",
     ]
-
-    def get_name(self, instance):
-        return instance.user.name
-
-    get_name.short_description = "Name"
 
     def get_email(self, instance):
         return instance.user.email
