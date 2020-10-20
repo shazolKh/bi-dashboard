@@ -14,7 +14,10 @@ class RegistrationSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
-        user = CustomUser.objects.create_user(**validated_data)
+        user = CustomUser.objects.create_user(
+            phone_no=validated_data.pop("phone_no"),
+            **validated_data,
+        )
         return user
 
 
@@ -44,8 +47,4 @@ class ProfileSerializer(serializers.ModelSerializer):
             "address",
             "bank_name",
             "bank_acc",
-            "license_type",
-            "license_price",
-            "license_iat",
-            "license_duration",
         )

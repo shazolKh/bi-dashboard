@@ -27,6 +27,15 @@ class RegistrationView(CreateAPIView):
     permission_classes = (AllowAny,)
     serializer_class = RegistrationSerializer
 
+    def post(self, request):
+        phone_no = request.data.pop("phone_no")
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save(phone_no=phone_no)
+            if user:
+                return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class UserView(RetrieveUpdateDestroyAPIView):
     """

@@ -28,17 +28,14 @@ def add_admin_permission(sender, instance, created, **kwargs):
 
 def create_user_profile(sender, instance, created, **kwargs):
     """
-    Automatically generates a profile when an User is created on post_save signal.
+    Automatically generates and updates a profile when an User is created on post_save signal.
     """
     is_admin = instance.is_staff or instance.is_superuser
-    if created and not is_admin:
-        Profile.objects.create(user=instance)
 
-
-def save_user_profile(sender, instance, **kwargs):
-    """
-    Automatically updates a profile when any User field is updated on post_save signal.
-    """
-    is_admin = instance.is_staff or instance.is_superuser
     if not is_admin:
-        instance.profile.save()
+        if created:
+            phone_no = instance.phone_no
+            delattr(instance, "phone_no")
+            Profile.objects.create(user=instance, phone_no=phone_no)
+        else:
+            instance.profile.save()

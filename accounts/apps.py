@@ -14,11 +14,9 @@ class AccountsConfig(AppConfig):
             create_staff_group,
             add_admin_permission,
             create_user_profile,
-            save_user_profile,
         )
 
         """Signals"""
         post_migrate.connect(create_staff_group, sender=self)
         post_save.connect(add_admin_permission, sender=CustomUser)
         post_save.connect(create_user_profile, sender=CustomUser)
-        post_save.connect(save_user_profile, sender=CustomUser)
