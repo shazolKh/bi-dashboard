@@ -7,8 +7,7 @@ class AccountsConfig(AppConfig):
 
     def ready(self):
         """
-        Runs when accounts app is ready.
-        Importing model HAS TO be inside ready().
+        Runs when accounts app is ready. Imports HAS TO be here.
         """
         from .models import CustomUser
         from .signals import (
@@ -18,7 +17,7 @@ class AccountsConfig(AppConfig):
             save_user_profile,
         )
 
-        # signals
+        """Signals"""
         post_migrate.connect(create_staff_group, sender=self)
         post_save.connect(add_admin_permission, sender=CustomUser)
         post_save.connect(create_user_profile, sender=CustomUser)

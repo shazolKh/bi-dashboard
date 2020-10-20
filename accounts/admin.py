@@ -7,9 +7,14 @@ from .models import CustomUser, Profile
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
+    """
+    Admin config for User in AdminSite. Includes superuser, staff and regular user.
+    """
+
+    model = CustomUser
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
-    model = CustomUser
+
     list_display = (
         "name",
         "email",
@@ -22,12 +27,12 @@ class CustomUserAdmin(UserAdmin):
         "is_staff",
         "is_active",
     )
-    # fields on user change form
+    """CustomUserChangeForm fields"""
     fieldsets = (
         ("Information", {"fields": ("name", "email", "password")}),
-        ("Permissions", {"fields": ("is_staff", "is_active")}),
+        ("Permission", {"fields": ("is_staff", "is_active")}),
     )
-    # fields on user add form
+    """CustomUserCreationForm fields"""
     add_fieldsets = (
         (
             "Information",
@@ -55,12 +60,18 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
+    """
+    Profile Config for User Profile in AdminSite. Only shows users who have associated Profile.
+    """
+
     model = Profile
 
     list_display = (
+        "get_name",
         "get_email",
         "phone_no",
         "org_name",
+        "address",
         "bank_name",
         "bank_acc",
         "license_type",
@@ -82,8 +93,8 @@ class ProfileAdmin(admin.ModelAdmin):
             "General Information",
             {
                 "fields": (
-                    "address",
                     "org_name",
+                    "address",
                     "bank_name",
                     "bank_acc",
                 )
@@ -114,8 +125,8 @@ class ProfileAdmin(admin.ModelAdmin):
             "General Information",
             {
                 "fields": (
-                    "address",
                     "org_name",
+                    "address",
                     "bank_name",
                     "bank_acc",
                 )
@@ -133,11 +144,19 @@ class ProfileAdmin(admin.ModelAdmin):
         ),
     )
 
-    search_fields = ("user__email",)
+    search_fields = (
+        "user__email",
+        "user__name",
+    )
 
     ordering = [
         "-user__created_at",
     ]
+
+    def get_name(self, instance):
+        return instance.user.name
+
+    get_name.short_description = "Name"
 
     def get_email(self, instance):
         return instance.user.email

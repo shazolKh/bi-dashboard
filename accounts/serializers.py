@@ -20,7 +20,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     """
-    Serializes instance based on UserProfile.
+    Serializes instance based on User.
     """
 
     class Meta:
@@ -30,7 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     """
-    Show profile with user information nested inside.
+    Show Profile with User model information nested inside.
     """
 
     user = UserSerializer(read_only=True)
@@ -49,18 +49,3 @@ class ProfileSerializer(serializers.ModelSerializer):
             "license_iat",
             "license_duration",
         )
-# {
-#     "user": {
-#         "name": "Stewart",
-#         "email": "stewart@gmail.com"
-#     },
-#     "phone_no": "",
-#     "org_name": "",
-#     "address": "",
-#     "bank_name": "",
-#     "bank_acc": "",
-#     "license_type": "free",
-#     "license_price": 0,
-#     "license_iat": "2020-10-20T11:01:12.842439+06:00",
-#     "license_duration": null
-# }

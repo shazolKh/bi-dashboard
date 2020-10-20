@@ -38,23 +38,22 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class Profile(models.Model):
 
-    # mandatory fields
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True
     )
     phone_regex = RegexValidator(
-        regex=r"^\+?1?\d{9,15}$",
-        message="Phone number must be entered in the format: '+999999999'.\nAt most 15 digits are allowed.",
+        regex=r"^\+(?:[0-9] ?){6,14}[0-9]$",
+        message="Invalid Phone Number",
     )
     phone_no = models.CharField(validators=[phone_regex], max_length=17)
 
-    # optional fields
+    """Optional Fields"""
     org_name = models.CharField(_("Organization"), max_length=255, blank=True)
     address = models.TextField(_("Address"), blank=True)
     bank_name = models.CharField(_("Associated Bank Name"), max_length=512, blank=True)
     bank_acc = models.CharField(_("Bank Account No"), max_length=24, blank=True)
 
-    # license fields
+    """License Fields"""
     LICENSE_CHOICES = (
         ("free", "Free"),
         ("trial", "Trial"),

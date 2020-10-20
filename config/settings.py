@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_PATH = Path.joinpath(BASE_DIR, ".env")
 
-# load env globally
+"""Load ENV Globally"""
 load_dotenv(dotenv_path=ENV_PATH)
 
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -22,10 +22,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # third-party
     "rest_framework",
     "corsheaders",
-    # local
     "accounts.apps.AccountsConfig",
 ]
 
@@ -83,26 +81,26 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# localization and timezone
+"""Localization and Timezone"""
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "Asia/Dhaka"
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# static assets
+"""Static Assets"""
 STATIC_URL = "/static/"
 
-# custom user model
+"""CustomUser as default AUTH model"""
 AUTH_USER_MODEL = "accounts.CustomUser"
 
-# cors settings
+"""Allowed CORS origins"""
 CORS_ORIGIN_WHITELIST = (
     "http://localhost:3000",
     "http://localhost:8000",
 )
 
-# DRF settings
+"""DRF Permission and Authentication"""
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
@@ -113,7 +111,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-# JWT settings
+"""SIMPLEJWT Config"""
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=14),
