@@ -36,6 +36,30 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
+class LoginEntry(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name=_("User"), on_delete=models.CASCADE
+    )
+    timestamp = models.DateTimeField(_("Login Timestamop"), auto_now_add=True)
+    ip_address = models.GenericIPAddressField(
+        _("Clients IP address"), protocol="both", unpack_ipv4=False
+    )
+    ip_address_type = models.CharField(_("Type of IP address"), max_length=50)
+    user_agent = models.CharField(_("Clients User Agent"), max_length=255)
+
+    class Meta:
+        verbose_name = _("Login Entry")
+        verbose_name_plural = _("Login Entries")
+
+    def __str__(self):
+        return self.user.email
+
+    def get_absolute_url(self):
+        return reverse("loginentry_detail", kwargs={"pk": self.pk})
+
+
 class Profile(models.Model):
 
     user = models.OneToOneField(
@@ -57,7 +81,8 @@ class Profile(models.Model):
     LICENSE_CHOICES = (
         ("free", "Free"),
         ("trial", "Trial"),
-        ("pro", "Pro"),
+        ("pro", "Professional"),
+        ("enterprise", "Enterprise"),
     )
     license_type = models.CharField(
         _("License Type"), max_length=10, choices=LICENSE_CHOICES, default="free"

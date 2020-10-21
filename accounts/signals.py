@@ -1,6 +1,10 @@
+from django.utils import timezone
+from django.dispatch import Signal
 from django.contrib.auth.models import Group, Permission
 
-from .models import CustomUser, Profile
+from ipware import get_client_ip
+
+from .models import CustomUser, LoginEntry, Profile
 
 
 def create_staff_group(sender, **kwargs):
@@ -26,7 +30,7 @@ def add_admin_permission(sender, instance, created, **kwargs):
         staff_group.user_set.add(instance)
 
 
-def create_user_profile(sender, instance, created, **kwargs):
+def change_user_profile(sender, instance, created, **kwargs):
     """
     Automatically generates and updates a profile when an User is created on post_save signal.
     """
@@ -39,3 +43,33 @@ def create_user_profile(sender, instance, created, **kwargs):
             Profile.objects.create(user=instance, phone_no=phone_no)
         else:
             instance.profile.save()
+
+
+"""Custom Signal dispatcher to trigger when user logs in"""
+login_signal = Signal(providing_args=["request", "user_email"])
+
+
+def store_login_information(sender, request, user_email, **kwargs):
+    """
+    Create login entry with ip and user_agent everytime user logs in.
+    """
+    user = sender.objects.get(email=user_email)
+    is_admin = user.is_staff or user.is_superuser
+
+    if not is_admin:
+        client_ip, is_routable = get_client_ip(request)
+        if is_routable:
+            ip_address_type = "Public"
+        else:
+            ip_address_type = "Private"
+
+        if client_ip is None:
+            raise ValueError("IP not found.")
+        else:
+            LoginEntry.objects.create(
+                user=user,
+                timestamp=timezone.now(),
+                ip_address=client_ip,
+                ip_address_type=ip_address_type,
+                user_agent=request.META["HTTP_USER_AGENT"],
+            )

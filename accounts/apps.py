@@ -13,10 +13,13 @@ class AccountsConfig(AppConfig):
         from .signals import (
             create_staff_group,
             add_admin_permission,
-            create_user_profile,
+            change_user_profile,
+            store_login_information,
+            login_signal,
         )
 
         """Signals"""
         post_migrate.connect(create_staff_group, sender=self)
         post_save.connect(add_admin_permission, sender=CustomUser)
-        post_save.connect(create_user_profile, sender=CustomUser)
+        post_save.connect(change_user_profile, sender=CustomUser)
+        login_signal.connect(store_login_information)

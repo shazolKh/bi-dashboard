@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import CustomUser, Profile
+from .models import CustomUser, LoginEntry, Profile
 
 
 @admin.register(CustomUser)
@@ -151,6 +151,47 @@ class ProfileAdmin(admin.ModelAdmin):
 
     ordering = [
         "-user__created_at",
+    ]
+
+    def get_name(self, instance):
+        return instance.user.name
+
+    get_name.short_description = "Name"
+
+    def get_email(self, instance):
+        return instance.user.email
+
+    get_email.short_description = "Email"
+
+
+@admin.register(LoginEntry)
+class LoginEntryAdmin(admin.ModelAdmin):
+
+    """
+    Admin config to show login monitor table.
+    """
+
+    model = LoginEntry
+    list_display = (
+        "get_name",
+        "get_email",
+        "timestamp",
+        "ip_address",
+        "ip_address_type",
+        "user_agent",
+    )
+
+    list_filter = ("ip_address_type",)
+
+    search_fields = (
+        "user__name",
+        "user__email",
+        "user_agent",
+        "ip_address",
+    )
+
+    ordering = [
+        "-timestamp",
     ]
 
     def get_name(self, instance):

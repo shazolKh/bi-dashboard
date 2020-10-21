@@ -21,9 +21,18 @@
   - Let stuffs only CRUD users aka Profiles but not themselves.
 
 - :heavy_check_mark: Integrate API based CRUD for CustomUser and Profile
+
   - Let User view, update and delete account
   - Let User only view and update Profile because profile can only be deleted with account
+
 - :heavy_check_mark: Integrate JWT
+
   - JWT token and isAuthenticated for every logged in requests.
+
+- :heavy_check_mark: Finalize Licenses
+
+- :heavy_check_mark: Add Monitoring Table for all Users
+
 - :white_check_mark: Add PowerBI app containing report model, MSAL logic, report handling.
+
 - :white_check_mark: Add security Pre-cautions
