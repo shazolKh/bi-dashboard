@@ -2,7 +2,13 @@ from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from .views import RegistrationView, ProfileView, UserView, CustomTokenObtainPairView
+from .views import (
+    RegistrationView,
+    ProfileView,
+    UserView,
+    CustomTokenObtainPairView,
+    LicenseUpdateView,
+)
 
 app_name = "accounts"
 
@@ -12,6 +18,7 @@ urlpatterns = [
     path("refresh_token/", TokenRefreshView.as_view()),
     path("user/", UserView.as_view()),
     path("profile/", ProfileView.as_view()),
+    path("try_pro/", LicenseUpdateView.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.generics import (
     CreateAPIView,
+    UpdateAPIView,
     RetrieveUpdateAPIView,
     RetrieveUpdateDestroyAPIView,
     get_object_or_404,
@@ -14,8 +15,13 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .signals import login_signal
-from .models import CustomUser, Profile
-from .serializers import RegistrationSerializer, UserSerializer, ProfileSerializer
+from .models import CustomUser, Profile, License
+from .serializers import (
+    RegistrationSerializer,
+    UserSerializer,
+    ProfileSerializer,
+    LicenseSerializer,
+)
 
 
 class RegistrationView(CreateAPIView):
@@ -82,3 +88,19 @@ class ProfileView(RetrieveUpdateAPIView):
     def get_object(self):
         qs = self.get_queryset()
         return get_object_or_404(qs, user=self.request.user)
+
+
+class LicenseUpdateView(UpdateAPIView):
+    """
+    Apply for Pro.
+    """
+
+    permission_classes = (IsAuthenticated,)
+    authentication_class = JWTAuthentication
+    serializer_class = LicenseSerializer
+
+    queryset = License.objects.all()
+
+    def get_object(self):
+        qs = self.get_queryset()
+        return get_object_or_404(qs, id=self.request.user.profile.assigned_license.id)

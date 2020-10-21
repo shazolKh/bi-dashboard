@@ -12,7 +12,6 @@
 
   - Add fields from the ERD to profile
   - Add Signal receivers to auto-create/edit profile row on User creation/edit
-  - Add license related fields with profile
 
 - :heavy_check_mark: Divide admin into Superuser and Staff
 
@@ -30,6 +29,9 @@
   - JWT token and isAuthenticated for every logged in requests.
 
 - :heavy_check_mark: Finalize Licenses
+
+  - Add license related fields
+  - Dynamic License creation
 
 - :heavy_check_mark: Add Monitoring Table for all Users
 

@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group, Permission
 
 from ipware import get_client_ip
 
-from .models import CustomUser, LoginEntry, Profile
+from .models import CustomUser, LoginEntry, Profile, License
 
 
 def create_staff_group(sender, **kwargs):
@@ -38,9 +38,15 @@ def change_user_profile(sender, instance, created, **kwargs):
 
     if not is_admin:
         if created:
-            phone_no = instance.phone_no
-            delattr(instance, "phone_no")
-            Profile.objects.create(user=instance, phone_no=phone_no)
+            if hasattr(instance, "phone_no"):
+                phone_no = instance.phone_no
+                delattr(instance, "phone_no")
+            else:
+                phone_no = ""
+            default_license = License.objects.create()
+            Profile.objects.create(
+                user=instance, phone_no=phone_no, assigned_license=default_license
+            )
         else:
             instance.profile.save()
 

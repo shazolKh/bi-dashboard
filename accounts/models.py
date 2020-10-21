@@ -36,6 +36,66 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
+class License(models.Model):
+
+    LICENSE_CHOICES = (
+        ("free", "Free"),
+        ("trial", "Trial"),
+        ("pro", "Professional"),
+        ("enterprise", "Enterprise"),
+    )
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    type = models.CharField(
+        _("License Type"), max_length=10, choices=LICENSE_CHOICES, default="free"
+    )
+    name = models.CharField(_("License Name"), max_length=50, default="Free")
+    price = models.PositiveIntegerField(_("License Price"), default=0)
+    iat = models.DateTimeField(_("License Issued at"), auto_now_add=True)
+    eat = models.DateTimeField(_("License Expires at"), null=True)
+
+    class Meta:
+        verbose_name = _("License")
+        verbose_name_plural = _("Licenses")
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("license_detail", kwargs={"pk": self.pk})
+
+
+class Profile(models.Model):
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True
+    )
+    phone_regex = RegexValidator(
+        regex=r"^\+(?:[0-9] ?){6,14}[0-9]$",
+        message="Invalid Phone Number",
+    )
+    phone_no = models.CharField(validators=[phone_regex], max_length=17, blank=True)
+
+    """Optional Fields"""
+    org_name = models.CharField(_("Organization"), max_length=255, blank=True)
+    address = models.TextField(_("Address"), blank=True)
+    bank_name = models.CharField(_("Associated Bank Name"), max_length=512, blank=True)
+    bank_acc = models.CharField(_("Bank Account No"), max_length=24, blank=True)
+    assigned_license = models.ForeignKey(
+        License,
+        verbose_name=_("Assigned License"),
+        related_name="profiles",
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        verbose_name = _("Profile")
+        verbose_name_plural = _("Profiles")
+
+    def __str__(self):
+        return self.user.email
+
+
 class LoginEntry(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -58,42 +118,3 @@ class LoginEntry(models.Model):
 
     def get_absolute_url(self):
         return reverse("loginentry_detail", kwargs={"pk": self.pk})
-
-
-class Profile(models.Model):
-
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True
-    )
-    phone_regex = RegexValidator(
-        regex=r"^\+(?:[0-9] ?){6,14}[0-9]$",
-        message="Invalid Phone Number",
-    )
-    phone_no = models.CharField(validators=[phone_regex], max_length=17)
-
-    """Optional Fields"""
-    org_name = models.CharField(_("Organization"), max_length=255, blank=True)
-    address = models.TextField(_("Address"), blank=True)
-    bank_name = models.CharField(_("Associated Bank Name"), max_length=512, blank=True)
-    bank_acc = models.CharField(_("Bank Account No"), max_length=24, blank=True)
-
-    """License Fields"""
-    LICENSE_CHOICES = (
-        ("free", "Free"),
-        ("trial", "Trial"),
-        ("pro", "Professional"),
-        ("enterprise", "Enterprise"),
-    )
-    license_type = models.CharField(
-        _("License Type"), max_length=10, choices=LICENSE_CHOICES, default="free"
-    )
-    license_price = models.PositiveIntegerField(_("License Price"), default=0)
-    license_iat = models.DateTimeField(_("License Issued at"), auto_now_add=True)
-    license_duration = models.DurationField(_("License Duration"), null=True)
-
-    class Meta:
-        verbose_name = _("Profile")
-        verbose_name_plural = _("Profiles")
-
-    def __str__(self):
-        return self.user.email

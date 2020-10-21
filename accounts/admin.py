@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import CustomUser, LoginEntry, Profile
+from .models import CustomUser, LoginEntry, Profile, License
 
 
 @admin.register(CustomUser)
@@ -74,9 +74,8 @@ class ProfileAdmin(admin.ModelAdmin):
         "address",
         "bank_name",
         "bank_acc",
-        "license_type",
-        "license_iat",
-        "license_duration",
+        "get_license_name",
+        "get_license_eat",
     )
 
     fieldsets = (
@@ -101,14 +100,8 @@ class ProfileAdmin(admin.ModelAdmin):
             },
         ),
         (
-            "Lincense Information",
-            {
-                "fields": (
-                    "license_type",
-                    "license_price",
-                    "license_duration",
-                )
-            },
+            "License Information",
+            {"fields": ("assigned_license",)},
         ),
     )
     add_fieldsets = (
@@ -133,14 +126,8 @@ class ProfileAdmin(admin.ModelAdmin):
             },
         ),
         (
-            "Lincense Information",
-            {
-                "fields": (
-                    "license_type",
-                    "license_price",
-                    "license_duration",
-                )
-            },
+            "License Information",
+            {"fields": ("assigned_license",)},
         ),
     )
 
@@ -162,6 +149,16 @@ class ProfileAdmin(admin.ModelAdmin):
         return instance.user.email
 
     get_email.short_description = "Email"
+
+    def get_license_name(self, instace):
+        return instace.assigned_license.name
+
+    get_license_name.short_description = "License"
+
+    def get_license_eat(self, instace):
+        return instace.assigned_license.eat
+
+    get_license_eat.short_description = "License Expires"
 
 
 @admin.register(LoginEntry)
@@ -203,3 +200,22 @@ class LoginEntryAdmin(admin.ModelAdmin):
         return instance.user.email
 
     get_email.short_description = "Email"
+
+
+@admin.register(License)
+class LicenseAdmin(admin.ModelAdmin):
+    model = License
+    list_display = (
+        "type",
+        "name",
+        "price",
+        "iat",
+        "eat",
+    )
+
+    list_filter = ("type",)
+    search_fields = ("name",)
+
+    ordering = [
+        "-iat",
+    ]
