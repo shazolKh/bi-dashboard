@@ -1,5 +1,3 @@
-from django.contrib.auth.signals import user_logged_in
-
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -15,12 +13,12 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .signals import login_signal
-from .models import CustomUser, Profile, License
+from .models import CustomUser, Profile, License, UserLicense
 from .serializers import (
     RegistrationSerializer,
     UserSerializer,
     ProfileSerializer,
-    LicenseSerializer,
+    LicenseUpdateSerializer,
 )
 
 
@@ -33,6 +31,12 @@ class RegistrationView(CreateAPIView):
     serializer_class = RegistrationSerializer
 
     def post(self, request):
+        """
+        Phone no. passing flow:
+        from view: serializer.save(phone_no) to serializer: validated_data.phone_no
+        from serializer: create_user(phone_no) to managers: create_user(param=phone_no)
+        from managers user.phone_no to signal: instance.phone_no
+        """
         phone_no = request.data.pop("phone_no")
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
@@ -92,15 +96,15 @@ class ProfileView(RetrieveUpdateAPIView):
 
 class LicenseUpdateView(UpdateAPIView):
     """
-    Apply for Pro.
+    Apply for Pro/Enterprise.
     """
 
     permission_classes = (IsAuthenticated,)
     authentication_class = JWTAuthentication
-    serializer_class = LicenseSerializer
+    serializer_class = LicenseUpdateSerializer
 
-    queryset = License.objects.all()
+    queryset = UserLicense.objects.all()
 
     def get_object(self):
         qs = self.get_queryset()
-        return get_object_or_404(qs, id=self.request.user.profile.assigned_license.id)
+        return get_object_or_404(qs, user=self.request.user)

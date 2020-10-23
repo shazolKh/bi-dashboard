@@ -1,7 +1,7 @@
 from django.utils import timezone
 from rest_framework import serializers
 
-from .models import CustomUser, Profile, License
+from .models import CustomUser, Profile, License, UserLicense
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -32,63 +32,67 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ("name", "email")
 
 
-class LicenseSerializer(serializers.ModelSerializer):
-    """
-    Show/Update license
-    """
-
-    class Meta:
-        model = License
-        fields = "__all__"
-        read_only_fields = (
-            "type",
-            "name",
-            "price",
-            "iat",
-            "eat",
-        )
-
-    def update(self, instance, validated_data):
-        new_instance = super().update(instance, validated_data)
-
-        new_instance.type = "trial"
-        new_instance.name = "Trial"
-        new_instance.iat = timezone.now()
-        new_instance.eat = timezone.now() + timezone.timedelta(7)
-        new_instance.save()
-
-        return new_instance
-
-
 class ProfileSerializer(serializers.ModelSerializer):
     """
     Show Profile with User model information nested inside.
     """
 
     user = UserSerializer(read_only=True)
-    license_name = serializers.CharField(
-        source="assigned_license.name",
-        read_only=True,
-    )
-    license_eat = serializers.CharField(
-        source="assigned_license.eat",
-        read_only=True,
-    )
 
     class Meta:
         model = Profile
         fields = (
             "user",
+            "phone_no",
             "org_name",
             "address",
-            "phone_no",
             "bank_name",
             "bank_acc",
-            "license_name",
-            "license_eat",
         )
         read_only_fields = (
             "phone_no",
             "bank_name",
             "bank_acc",
         )
+
+
+class LicenseUpdateSerializer(serializers.ModelSerializer):
+    """
+    Update license and Applied for field. User can only specify,
+    1. What license is being applied for?
+    2. What is the quantity if its of type 'pro'?
+    """
+
+    class Meta:
+        model = UserLicense
+        fields = (
+            "applied_license",
+            "applied_license_qt",
+        )
+
+    def update(self, instance, validated_data):
+
+        current_license = instance.assigned_license
+        new_instance = instance
+
+        if current_license.license_type == "free":
+            """Create default trial license and user license to that"""
+            default_trial = License.objects.get(license_type="trial")
+
+            new_instance.assigned_license = default_trial
+            new_instance.current_license_price = default_trial.price
+            new_instance.current_license_qt = 1
+
+            new_instance.iat = timezone.now()
+            new_instance.eat = timezone.now() + default_trial.duration
+
+        if not (
+            current_license.license_type == "trial"
+            and validated_data["applied_license"] == "trial"
+        ):
+            new_instance.applied_license = validated_data["applied_license"]
+            new_instance.applied_license_qt = validated_data["applied_license_qt"]
+            new_instance.upgradingfrom_license = current_license.license_type
+
+        new_instance.save()
+        return new_instance

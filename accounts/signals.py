@@ -43,8 +43,10 @@ def change_user_profile(sender, instance, created, **kwargs):
                 delattr(instance, "phone_no")
             else:
                 phone_no = ""
-            default_license = License.objects.get(license_type="free")
             Profile.objects.create(user=instance, phone_no=phone_no)
+
+            """Assign a default free license to User"""
+            default_license = License.objects.get(license_type="free")
             UserLicense.objects.create(user=instance, assigned_license=default_license)
         else:
             instance.profile.save()

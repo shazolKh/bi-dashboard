@@ -1,8 +1,9 @@
+from django.utils import timezone
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm, LicenseForm
-from .models import CustomUser, LoginEntry, Profile, License, UserLicense
+from .models import CustomUser, Profile, License, UserLicense, LoginEntry
 
 
 @admin.register(CustomUser)
@@ -75,8 +76,23 @@ class ProfileAdmin(admin.ModelAdmin):
         "bank_name",
         "bank_acc",
         "get_license_name",
-        "get_license_eat",
     )
+
+    def get_name(self, instance):
+        return instance.user.name
+
+    get_name.short_description = "Name"
+
+    def get_email(self, instance):
+        return instance.user.email
+
+    get_email.short_description = "Email"
+
+    def get_license_name(self, instace):
+        user_license = UserLicense.objects.get(user=instace.user)
+        return user_license.assigned_license.name
+
+    get_license_name.short_description = "License"
 
     fieldsets = (
         (
@@ -126,33 +142,118 @@ class ProfileAdmin(admin.ModelAdmin):
     search_fields = (
         "user__email",
         "user__name",
+        "bank_acc",
     )
 
     ordering = [
         "-user__created_at",
     ]
 
-    def get_name(self, instance):
-        return instance.user.name
 
-    get_name.short_description = "Name"
+@admin.register(License)
+class LicenseAdmin(admin.ModelAdmin):
+    """
+    License Config in Admin Site. LicenseForm to show Duration widget.
+    """
+
+    model = License
+    form = LicenseForm
+    add_form = LicenseForm
+
+    list_display = (
+        "license_type",
+        "name",
+        "price",
+        "duration",
+    )
+
+    list_filter = ("license_type",)
+    search_fields = ("name",)
+
+    ordering = [
+        "name",
+    ]
+
+
+@admin.register(UserLicense)
+class UserLicenseAdmin(admin.ModelAdmin):
+    """
+    UserLicense Config for Admin Site.
+    """
+
+    model = UserLicense
+
+    list_display = (
+        "get_email",
+        "get_license_name",
+        "get_license_price",
+        "current_license_qt",
+        "current_license_price",
+        "iat",
+        "eat",
+        "total_price",
+        "applied_license",
+        "applied_license_qt",
+    )
+
+    def save_model(self, request, obj, form, change):
+        """
+        Before saving UserLicense instance,
+        1. If pro/enterprise and upgrading from pro/enterprise, expiry will start from current eat
+        2. If pro/enterprise and upgrading from trial;, expiry will start from current time
+        3. If free/trial, expiry will start from current time
+        """
+
+        current_license = License.objects.get(id=obj.assigned_license.id)
+
+        cl_type = current_license.license_type
+        cl_dur = current_license.duration
+        cl_price = current_license.price
+        upgrading_from = obj.upgradingfrom_license
+
+        if cl_type == "pro" or cl_type == "enterprise":
+            if upgrading_from == "trial":
+                eat = timezone.now()
+            else:
+                eat = obj.eat
+            obj.eat = eat + cl_dur * obj.current_license_qt
+        else:
+            obj.iat = timezone.now()
+            obj.eat = timezone.now() + cl_dur
+
+        obj.current_license_price = cl_price * obj.current_license_qt
+
+        """Update total billing"""
+        obj.total_price = obj.total_price + obj.current_license_price
+        return obj.save()
 
     def get_email(self, instance):
         return instance.user.email
 
-    get_email.short_description = "Email"
+    get_email.short_description = "User Email"
 
-    def get_license_name(self, instace):
-        user_license = UserLicense.objects.get(user=instace.user)
-        return user_license.assigned_license.name
+    def get_license_name(self, instance):
+        return instance.assigned_license.name
 
-    get_license_name.short_description = "License"
+    get_license_name.short_description = "License Name"
 
-    def get_license_eat(self, instace):
-        user_license = UserLicense.objects.get(user=instace.user)
-        return user_license.eat
+    def get_license_price(self, instance):
+        return instance.assigned_license.price
 
-    get_license_eat.short_description = "License Expires"
+    get_license_price.short_description = "License Base Price"
+
+    list_filter = (
+        "assigned_license__license_type",
+        "assigned_license__name",
+    )
+    search_fields = (
+        "user__name",
+        "user__email",
+    )
+
+    ordering = [
+        "-iat",
+    ]
 
 
 @admin.register(LoginEntry)
@@ -194,71 +295,3 @@ class LoginEntryAdmin(admin.ModelAdmin):
         return instance.user.email
 
     get_email.short_description = "Email"
-
-
-@admin.register(License)
-class LicenseAdmin(admin.ModelAdmin):
-    model = License
-    form = LicenseForm
-    add_form = LicenseForm
-    list_display = (
-        "license_type",
-        "name",
-        "price",
-        "duration",
-    )
-
-    list_filter = ("license_type",)
-    search_fields = ("name",)
-
-    ordering = [
-        "name",
-    ]
-
-
-@admin.register(UserLicense)
-class UserLicenseAdmin(admin.ModelAdmin):
-    model = UserLicense
-
-    list_display = (
-        "get_name",
-        "get_email",
-        "get_license_type",
-        "get_license_name",
-        "get_license_price",
-        "quantity",
-        "iat",
-        "eat",
-    )
-
-    list_filter = ("assigned_license__license_type",)
-    search_fields = ("assigned_license__name",)
-
-    ordering = [
-        "-iat",
-    ]
-
-    def get_name(self, instance):
-        return instance.user.name
-
-    get_name.short_description = "Name"
-
-    def get_email(self, instance):
-        return instance.user.email
-
-    get_email.short_description = "Email"
-
-    def get_license_type(self, instance):
-        return instance.assigned_license.license_type
-
-    get_license_type.short_description = "License Type"
-
-    def get_license_name(self, instance):
-        return instance.assigned_license.name
-
-    get_license_name.short_description = "License Name"
-
-    def get_license_price(self, instance):
-        return instance.assigned_license.price
-
-    get_license_price.short_description = "License Price"
