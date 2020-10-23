@@ -30,6 +30,7 @@
 
 - :heavy_check_mark: Finalize Licenses
 
+  - Separate table for licenses and user-licenses
   - Add license related fields
   - Dynamic License creation
 

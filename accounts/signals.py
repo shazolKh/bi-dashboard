@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group, Permission
 
 from ipware import get_client_ip
 
-from .models import CustomUser, LoginEntry, Profile, License
+from .models import CustomUser, LoginEntry, Profile, License, UserLicense
 
 
 def create_staff_group(sender, **kwargs):
@@ -43,10 +43,9 @@ def change_user_profile(sender, instance, created, **kwargs):
                 delattr(instance, "phone_no")
             else:
                 phone_no = ""
-            default_license = License.objects.create()
-            Profile.objects.create(
-                user=instance, phone_no=phone_no, assigned_license=default_license
-            )
+            default_license = License.objects.get(license_type="free")
+            Profile.objects.create(user=instance, phone_no=phone_no)
+            UserLicense.objects.create(user=instance, assigned_license=default_license)
         else:
             instance.profile.save()
 

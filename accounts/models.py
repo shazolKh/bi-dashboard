@@ -46,13 +46,12 @@ class License(models.Model):
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    type = models.CharField(
+    license_type = models.CharField(
         _("License Type"), max_length=10, choices=LICENSE_CHOICES, default="free"
     )
     name = models.CharField(_("License Name"), max_length=50, default="Free")
     price = models.PositiveIntegerField(_("License Price"), default=0)
-    iat = models.DateTimeField(_("License Issued at"), auto_now_add=True)
-    eat = models.DateTimeField(_("License Expires at"), null=True)
+    duration = models.DurationField(_("License Duration"), blank=True)
 
     class Meta:
         verbose_name = _("License")
@@ -81,12 +80,6 @@ class Profile(models.Model):
     address = models.TextField(_("Address"), blank=True)
     bank_name = models.CharField(_("Associated Bank Name"), max_length=512, blank=True)
     bank_acc = models.CharField(_("Bank Account No"), max_length=24, blank=True)
-    assigned_license = models.ForeignKey(
-        License,
-        verbose_name=_("Assigned License"),
-        related_name="profiles",
-        on_delete=models.CASCADE,
-    )
 
     class Meta:
         verbose_name = _("Profile")
@@ -94,6 +87,37 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.email
+
+
+class UserLicense(models.Model):
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True
+    )
+    assigned_license = models.ForeignKey(
+        License,
+        verbose_name=_("Assigned License"),
+        related_name="licenses",
+        on_delete=models.CASCADE,
+    )
+    quantity = models.PositiveIntegerField(_("License Quantity"), default=1)
+    iat = models.DateTimeField(_("License Issued at"), auto_now_add=True)
+    eat = models.DateTimeField(_("License Expires at"), blank=True)
+
+    def save(self, *args, **kwargs):
+        license_duration = License.objects.get(id=self.assigned_license.id).duration
+        self.eat = timezone.now() + license_duration * self.quantity
+        return super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _("User License")
+        verbose_name_plural = _("User Licenses")
+
+    def __str__(self):
+        return self.user.email
+
+    def get_absolute_url(self):
+        return reverse("userlicense_detail", kwargs={"pk": self.pk})
 
 
 class LoginEntry(models.Model):
