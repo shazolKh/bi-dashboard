@@ -36,6 +36,8 @@
 
 - :heavy_check_mark: Add Monitoring Table for all Users
 
+- :heavy_check_mark: Add Email verification, Password reset and Change
+
 - :white_check_mark: Add PowerBI app containing report model, MSAL logic, report handling.
 
 - :white_check_mark: Add security Pre-cautions

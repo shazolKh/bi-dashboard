@@ -1,10 +1,14 @@
 from django.utils import timezone
 from rest_framework import serializers
+from allauth.account.signals import user_logged_in
+from dj_rest_auth.registration.serializers import setup_user_email
+from dj_rest_auth.serializers import UserDetailsSerializer, LoginSerializer
 
+from .signals import login_signal
 from .models import CustomUser, Profile, License, UserLicense
 
 
-class RegistrationSerializer(serializers.ModelSerializer):
+class RegistrationSerializer(serializers.Serializer):
     """
     Creates User and User Profile on sign up.
     """
@@ -14,11 +18,13 @@ class RegistrationSerializer(serializers.ModelSerializer):
         fields = ("email", "password", "name")
         extra_kwargs = {"password": {"write_only": True}}
 
-    def create(self, validated_data):
+    def save(self, request):
+        phone_no = request.data["phone_no"]
+        print(phone_no, request)
         user = CustomUser.objects.create_user(
-            phone_no=validated_data.pop("phone_no"),
-            **validated_data,
+            **request.data,
         )
+        setup_user_email(request, user, [])
         return user
 
 
@@ -30,9 +36,29 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ("name", "email")
+        read_only_fields = (
+            "name",
+            "email",
+        )
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class LoginSerializer(LoginSerializer):
+    """
+    Overridden to send custom login signal.
+    """
+
+    def validate(self, attrs):
+        user = super().validate(attrs)
+        request = self.context.get("request")
+        login_signal.send(
+            sender=CustomUser,
+            request=request,
+            user_email=request.data["email"],
+        )
+        return user
+
+
+class ProfileSerializer(UserDetailsSerializer):
     """
     Show Profile with User model information nested inside.
     """
