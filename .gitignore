@@ -1,6 +1,9 @@
-.env
+# folder
 venv
-
 __pycache__
 
+# files
+.env
 db.sqlite3
+openapi_schema.yml
+yaml_swagger.py

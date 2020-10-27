@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Swagger UI</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.24.2/swagger-ui.css" >
+  <style>
+    html
+    {
+      box-sizing: border-box;
+      overflow: -moz-scrollbars-vertical;
+      overflow-y: scroll;
+    }
+    *,
+    *:before,
+    *:after
+    {
+      box-sizing: inherit;
+    }
+
+    body {
+      margin:0;
+      background: #fafafa;
+    }
+  </style>
+</head>
+<body>
+
+<div id="swagger-ui"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.24.2/swagger-ui-bundle.js"> </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.24.2/swagger-ui-standalone-preset.js"> </script>
+<script>
+window.onload = function() {
+
+  var spec = {"openapi": "3.0.2", "info": {"title": "", "version": ""}, "paths": {"/api/v1/user-profile/": {"get": {"operationId": "retrieveProfile", "description": "Read/Update User Profile.", "parameters": [], "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Profile"}}}, "description": ""}}, "tags": ["api"]}, "put": {"operationId": "updateProfile", "description": "Read/Update User Profile.", "parameters": [], "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Profile"}}, "application/x-www-form-urlencoded": {"schema": {"$ref": "#/components/schemas/Profile"}}, "multipart/form-data": {"schema": {"$ref": "#/components/schemas/Profile"}}}}, "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Profile"}}}, "description": ""}}, "tags": ["api"]}, "patch": {"operationId": "partialUpdateProfile", "description": "Read/Update User Profile.", "parameters": [], "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Profile"}}, "application/x-www-form-urlencoded": {"schema": {"$ref": "#/components/schemas/Profile"}}, "multipart/form-data": {"schema": {"$ref": "#/components/schemas/Profile"}}}}, "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Profile"}}}, "description": ""}}, "tags": ["api"]}}, "/api/v1/account/user/": {"get": {"operationId": "retrieveUser", "description": "Reads and updates UserModel fields\nAccepts GET, PUT, PATCH methods.\n\nDefault accepted fields: username, first_name, last_name\nDefault display fields: pk, username, email, first_name, last_name\nRead-only fields: pk, email\n\nReturns UserModel fields.", "parameters": [], "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/User"}}}, "description": ""}}, "tags": ["api"]}, "put": {"operationId": "updateUser", "description": "Reads and updates UserModel fields\nAccepts GET, PUT, PATCH methods.\n\nDefault accepted fields: username, first_name, last_name\nDefault display fields: pk, username, email, first_name, last_name\nRead-only fields: pk, email\n\nReturns UserModel fields.", "parameters": [], "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/User"}}, "application/x-www-form-urlencoded": {"schema": {"$ref": "#/components/schemas/User"}}, "multipart/form-data": {"schema": {"$ref": "#/components/schemas/User"}}}}, "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/User"}}}, "description": ""}}, "tags": ["api"]}, "patch": {"operationId": "partialUpdateUser", "description": "Reads and updates UserModel fields\nAccepts GET, PUT, PATCH methods.\n\nDefault accepted fields: username, first_name, last_name\nDefault display fields: pk, username, email, first_name, last_name\nRead-only fields: pk, email\n\nReturns UserModel fields.", "parameters": [], "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/User"}}, "application/x-www-form-urlencoded": {"schema": {"$ref": "#/components/schemas/User"}}, "multipart/form-data": {"schema": {"$ref": "#/components/schemas/User"}}}}, "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/User"}}}, "description": ""}}, "tags": ["api"]}}, "/api/v1/account/password/reset/": {"post": {"operationId": "createPasswordReset", "description": "Calls Django Auth PasswordResetForm save method.\n\nAccepts the following POST parameters: email\nReturns the success/fail message.", "parameters": [], "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/PasswordReset"}}, "application/x-www-form-urlencoded": {"schema": {"$ref": "#/components/schemas/PasswordReset"}}, "multipart/form-data": {"schema": {"$ref": "#/components/schemas/PasswordReset"}}}}, "responses": {"201": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/PasswordReset"}}}, "description": ""}}, "tags": ["api"]}}, "/api/v1/account/login/": {"post": {"operationId": "createLogin", "description": "Check the credentials and return the REST Token\nif the credentials are valid and authenticated.\nCalls Django Auth login method to register User ID\nin Django session framework\n\nAccept the following POST parameters: username, password\nReturn the REST Framework Token Object's key.", "parameters": [], "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Login"}}, "application/x-www-form-urlencoded": {"schema": {"$ref": "#/components/schemas/Login"}}, "multipart/form-data": {"schema": {"$ref": "#/components/schemas/Login"}}}}, "responses": {"201": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Login"}}}, "description": ""}}, "tags": ["api"]}}, "/api/v1/account/password/change/": {"post": {"operationId": "createPasswordChange", "description": "Calls Django Auth SetPasswordForm save method.\n\nAccepts the following POST parameters: new_password1, new_password2\nReturns the success/fail message.", "parameters": [], "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/PasswordChange"}}, "application/x-www-form-urlencoded": {"schema": {"$ref": "#/components/schemas/PasswordChange"}}, "multipart/form-data": {"schema": {"$ref": "#/components/schemas/PasswordChange"}}}}, "responses": {"201": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/PasswordChange"}}}, "description": ""}}, "tags": ["api"]}}, "/api/v1/account/token/refresh/": {"post": {"operationId": "createTokenRefresh", "description": "Takes a refresh type JSON web token and returns an access type JSON web\ntoken if the refresh token is valid.", "parameters": [], "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/TokenRefresh"}}, "application/x-www-form-urlencoded": {"schema": {"$ref": "#/components/schemas/TokenRefresh"}}, "multipart/form-data": {"schema": {"$ref": "#/components/schemas/TokenRefresh"}}}}, "responses": {"201": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/TokenRefresh"}}}, "description": ""}}, "tags": ["api"]}}, "/api/v1/account/registration/": {"post": {"operationId": "createRegistration", "description": "", "parameters": [], "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Registration"}}, "application/x-www-form-urlencoded": {"schema": {"$ref": "#/components/schemas/Registration"}}, "multipart/form-data": {"schema": {"$ref": "#/components/schemas/Registration"}}}}, "responses": {"201": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Registration"}}}, "description": ""}}, "tags": ["api"]}}, "/api/v1/apply-for-license/": {"put": {"operationId": "updateUserLicense", "description": "Apply for Pro/Enterprise.", "parameters": [], "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/LicenseUpdate"}}, "application/x-www-form-urlencoded": {"schema": {"$ref": "#/components/schemas/LicenseUpdate"}}, "multipart/form-data": {"schema": {"$ref": "#/components/schemas/LicenseUpdate"}}}}, "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/LicenseUpdate"}}}, "description": ""}}, "tags": ["api"]}, "patch": {"operationId": "partialUpdateUserLicense", "description": "Apply for Pro/Enterprise.", "parameters": [], "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/LicenseUpdate"}}, "application/x-www-form-urlencoded": {"schema": {"$ref": "#/components/schemas/LicenseUpdate"}}, "multipart/form-data": {"schema": {"$ref": "#/components/schemas/LicenseUpdate"}}}}, "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/LicenseUpdate"}}}, "description": ""}}, "tags": ["api"]}}}, "components": {"schemas": {"Profile": {"type": "object", "properties": {"user": {"type": "object", "properties": {"name": {"type": "string", "readOnly": true}, "email": {"type": "string", "format": "email", "readOnly": true}}, "readOnly": true}, "phone_no": {"type": "string", "readOnly": true}, "org_name": {"type": "string", "maxLength": 255}, "address": {"type": "string"}, "bank_name": {"type": "string", "readOnly": true}, "bank_acc": {"type": "string", "readOnly": true}}}, "User": {"type": "object", "properties": {"name": {"type": "string", "readOnly": true}, "email": {"type": "string", "format": "email", "readOnly": true}}}, "PasswordReset": {"type": "object", "properties": {"email": {"type": "string", "format": "email"}}, "required": ["email"]}, "PasswordResetConfirm": {"type": "object", "properties": {"new_password1": {"type": "string", "maxLength": 128}, "new_password2": {"type": "string", "maxLength": 128}, "uid": {"type": "string"}, "token": {"type": "string"}}, "required": ["new_password1", "new_password2", "uid", "token"]}, "Login": {"type": "object", "properties": {"username": {"type": "string"}, "email": {"type": "string", "format": "email"}, "password": {"type": "string"}}, "required": ["password"]}, "PasswordChange": {"type": "object", "properties": {"old_password": {"type": "string", "maxLength": 128}, "new_password1": {"type": "string", "maxLength": 128}, "new_password2": {"type": "string", "maxLength": 128}}, "required": ["old_password", "new_password1", "new_password2"]}, "TokenVerify": {"type": "object", "properties": {"token": {"type": "string"}}, "required": ["token"]}, "TokenRefresh": {"type": "object", "properties": {"refresh": {"type": "string"}}, "required": ["refresh"]}, "Registration": {"type": "object", "properties": {}}, "VerifyEmail": {"type": "object", "properties": {"key": {"type": "string"}}, "required": ["key"]}, "LicenseUpdate": {"type": "object", "properties": {"applied_license": {"enum": ["free", "trial", "pro", "enterprise"], "type": "string"}, "applied_license_qt": {"type": "integer"}}}}}};
+
+  // Build a system
+  const ui = SwaggerUIBundle({
+    spec: spec,
+    dom_id: '#swagger-ui',
+    deepLinking: true,
+    presets: [
+      SwaggerUIBundle.presets.apis,
+      SwaggerUIStandalonePreset
+    ],
+    plugins: [
+      SwaggerUIBundle.plugins.DownloadUrl
+    ],
+    layout: "StandaloneLayout"
+  })
+
+  window.ui = ui
+}
+</script>
+</body>
+
+</html>
