@@ -18,4 +18,5 @@ urlpatterns = [
         VerifyEmailView.as_view(),
         name="account_email_verification_sent",
     ),
+    path("api/v1/dashboard/", include("powerbi.urls")),
 ]

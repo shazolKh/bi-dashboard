@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "durationwidget",
     # custom
     "accounts.apps.AccountsConfig",
+    "powerbi.apps.PowerbiConfig",
 ]
 
 MIDDLEWARE = [
@@ -100,6 +101,20 @@ USE_TZ = True
 
 """Static Assets"""
 STATIC_URL = "/static/"
+
+"""MSAL Configuration"""
+MSAL_CONFIG = {
+    "AUTHENTICATION_MODE": os.getenv("AUTHENTICATION_MODE"),
+    "WORKSPACE_ID": os.getenv("WORKSPACE_ID"),
+    "REPORT_ID": os.getenv("REPORT_ID"),
+    "TENANT_ID": os.getenv("TENANT_ID"),
+    "CLIENT_ID": os.getenv("CLIENT_ID"),
+    "CLIENT_SECRET": os.getenv("CLIENT_SECRET"),
+    "SCOPE": ["https://analysis.windows.net/powerbi/api/.default"],
+    "AUTHORITY": "https://login.microsoftonline.com/organizations",
+    "POWER_BI_USER": os.getenv("POWER_BI_USER"),
+    "POWER_BI_PASS": os.getenv("POWER_BI_PASS"),
+}
 
 """CustomUser as default AUTH model"""
 AUTH_USER_MODEL = "accounts.CustomUser"

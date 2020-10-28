@@ -1,0 +1,514 @@
+openapi: 3.0.2
+info:
+  title: "Initial API Endpoints"
+  version: "0.1.0"
+paths:
+  /api/v1/user-profile/:
+    get:
+      operationId: retrieveProfile
+      description: Read/Update User Profile.
+      parameters: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+          description: ""
+      tags:
+        - api
+    put:
+      operationId: updateProfile
+      description: Read/Update User Profile.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Profile"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/Profile"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Profile"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+          description: ""
+      tags:
+        - api
+    patch:
+      operationId: partialUpdateProfile
+      description: Read/Update User Profile.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Profile"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/Profile"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Profile"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+          description: ""
+      tags:
+        - api
+  /api/v1/account/user/:
+    get:
+      operationId: retrieveUser
+      description: "ReadsUserModel fields
+
+        Accepts GET method.
+
+
+        Default accepted fields: None
+
+        Default display fields: name, email
+
+        Read-only fields: name, email
+
+
+        Returns UserModel fields."
+      parameters: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+          description: ""
+      tags:
+        - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/User"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+          description: ""
+      tags:
+        - api
+  /api/v1/dashboard/:
+    get:
+      operationId: listDashboards
+      description: Read a list of Dashboard.
+      parameters: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Dashboard"
+          description: ""
+      tags:
+        - api
+  /api/v1/dashboard/{id}:
+    get:
+      operationId: retrieveDashboard
+      description: Read a single Dashboard.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A UUID string identifying this dashboard.
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
+          description: ""
+      tags:
+        - api
+  /api/v1/account/password/reset/:
+    post:
+      operationId: createPasswordReset
+      description: "Calls Django Auth PasswordResetForm save method.
+
+
+        Accepts the following POST parameters: email
+
+        Returns the success/fail message."
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PasswordReset"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/PasswordReset"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/PasswordReset"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PasswordReset"
+          description: ""
+      tags:
+        - api
+  /api/v1/account/login/:
+    post:
+      operationId: createLogin
+      description: "Check the credentials and return the REST Token
+
+        if the credentials are valid and authenticated.
+
+        Calls Django Auth login method to register User ID
+
+        in Django session framework
+
+
+        Accept the following POST parameters: email, password
+
+        Return the REST Framework Token Object's key."
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Login"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/User"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Login"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+                
+          description: ""
+      tags:
+        - api
+  /api/v1/account/password/change/:
+    post:
+      operationId: createPasswordChange
+      description: "Calls Django Auth SetPasswordForm save method.
+
+
+        Accepts the following POST parameters: new_password1, new_password2, old_password
+
+        Returns the success/fail message."
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PasswordChange"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/PasswordChange"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/PasswordChange"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PasswordChange"
+          description: ""
+      tags:
+        - api
+  /api/v1/account/token/refresh/:
+    post:
+      operationId: createTokenRefresh
+      description:
+        "Takes a refresh type JSON web token and returns an access type
+        JSON web
+
+        token if the refresh token is valid."
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TokenRefresh"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/TokenRefresh"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/TokenRefresh"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenRefresh"
+          description: ""
+      tags:
+        - api
+  /api/v1/account/registration/:
+    post:
+      operationId: createRegistration
+      description: ""
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Registration"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/Registration"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Registration"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Registration"
+          description: ""
+      tags:
+        - api
+  /api/v1/apply-for-license/:
+    put:
+      operationId: updateUserLicense
+      description: Apply for Pro/Enterprise.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LicenseUpdate"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/LicenseUpdate"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/LicenseUpdate"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LicenseUpdate"
+          description: ""
+      tags:
+        - api
+    patch:
+      operationId: partialUpdateUserLicense
+      description: Apply for Pro/Enterprise.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LicenseUpdate"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/LicenseUpdate"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/LicenseUpdate"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LicenseUpdate"
+          description: ""
+      tags:
+        - api
+components:
+  schemas:
+    Profile:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            name:
+              type: string
+              readOnly: true
+            email:
+              type: string
+              format: email
+              readOnly: true
+          readOnly: true
+        phone_no:
+          type: string
+          readOnly: true
+        org_name:
+          type: string
+          maxLength: 255
+        address:
+          type: string
+        bank_name:
+          type: string
+          readOnly: true
+        bank_acc:
+          type: string
+          readOnly: true
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+          readOnly: true
+        email:
+          type: string
+          format: email
+          readOnly: true
+    Dashboard:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 250
+        dashboard_id:
+          type: string
+          maxLength: 250
+        thumbnail_url:
+          type: string
+          maxLength: 250
+        license_type:
+          type: string
+      required:
+        - dashboard_id
+        - thumbnail_url
+        - license_type
+    PasswordReset:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+        - email
+    PasswordResetConfirm:
+      type: object
+      properties:
+        new_password1:
+          type: string
+          maxLength: 128
+        new_password2:
+          type: string
+          maxLength: 128
+        uid:
+          type: string
+        token:
+          type: string
+      required:
+        - new_password1
+        - new_password2
+        - uid
+        - token
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - password
+    PasswordChange:
+      type: object
+      properties:
+        old_password:
+          type: string
+          maxLength: 128
+        new_password1:
+          type: string
+          maxLength: 128
+        new_password2:
+          type: string
+          maxLength: 128
+      required:
+        - old_password
+        - new_password1
+        - new_password2
+    TokenVerify:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+        - token
+    TokenRefresh:
+      type: object
+      properties:
+        refresh:
+          type: string
+      required:
+        - refresh
+    Registration:
+      type: object
+      properties: {}
+    VerifyEmail:
+      type: object
+      properties:
+        key:
+          type: string
+      required:
+        - key
+    LicenseUpdate:
+      type: object
+      properties:
+        applied_license:
+          enum:
+            - free
+            - trial
+            - pro
+            - enterprise
+          type: string
+        applied_license_qt:
+          type: integer
+    Token:
+      type: object
+      properties:
+        access_token:
+          type: string
+          readOnly: true
+        refresh_token:
+          type: string
+          readOnly: true
+        user:
+          type: object
+          properties:
+            name:
+              type: string
+              readOnly: true
+            email:
+              type: string
+              format: email
+              readOnly: true
