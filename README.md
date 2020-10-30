@@ -58,18 +58,16 @@ python manage.py runserver
 
 - :heavy_check_mark: Add PowerBI app containing report model, MSAL logic, report handling.
 
-- :white_check_mark: Add security Pre-cautions
+- :heavy_check_mark: Add security Pre-cautions and other details
 
-  - Confirm sending token on login
   - Send new access token from old refresh token in cookie
   - Check refresh token expiry and renewal
   - Lock internal APIs(those that don't need client access) completely
   - Check storing password in hash
   - Recheck password reset/change flow
   - Hide backend APIs completely without trusted client
-  - Check MSAL Token expiry and renewal cycle
-
-- :white_check_mark: Setup server and Database
   - Finalize Email templates
   - Add static pages(Email confirm/Password Reset/Password change confirm)
+
+- :white_check_mark: Setup server and Database
   - PostgreSQL Database setup and backup

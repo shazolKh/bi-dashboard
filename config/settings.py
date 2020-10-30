@@ -54,7 +54,9 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            os.path.join(BASE_DIR, "accounts", "templates"),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -120,10 +122,7 @@ MSAL_CONFIG = {
 AUTH_USER_MODEL = "accounts.CustomUser"
 
 """Allowed CORS origins"""
-CORS_ORIGIN_WHITELIST = (
-    "http://localhost:3000",
-    "http://localhost:8000",
-)
+# CORS_ORIGIN_WHITELIST = ("*",)
 
 """DRF Permission and Authentication"""
 REST_FRAMEWORK = {
@@ -137,7 +136,7 @@ REST_FRAMEWORK = {
 }
 
 """Email Server setup"""
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_USE_TLS = True
 EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
@@ -159,8 +158,12 @@ OLD_PASSWORD_FIELD_ENABLED = True
 # ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
 """Redirect user to client-side login page after Email confirmation"""
-# ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = "CLIENT_LOGIN_PAGE"
-# ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = "CLIENT_LOGIN_PAGE"
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = (
+    "https://django-react-jwt.netlify.app/"
+)
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = (
+    "https://django-react-jwt.netlify.app/"
+)
 
 SITE_ID = 1
 
@@ -175,4 +178,4 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 
 """SIMPLEJWT Config"""
 REST_USE_JWT = True
-JWT_AUTH_COOKIE = "token"
+JWT_AUTH_COOKIE = "atok"

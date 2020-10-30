@@ -1,3 +1,5 @@
+from datetime import datetime
+from django.conf import settings
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -6,11 +8,52 @@ from rest_framework.generics import (
     RetrieveUpdateAPIView,
     get_object_or_404,
 )
+from rest_framework_simplejwt.views import TokenViewBase
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework_simplejwt.settings import api_settings as jwt_settings
+
 from .models import Profile, UserLicense
 from .serializers import (
     ProfileSerializer,
     LicenseUpdateSerializer,
 )
+
+
+class CustomTokenRefreshView(TokenViewBase):
+    """
+    Send access token as http-only cookie when refreshing token.
+    """
+
+    serializer_class = TokenRefreshSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+        except TokenError as e:
+            raise InvalidToken(e.args[0])
+
+        response = Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+        if getattr(settings, "REST_USE_JWT", False):
+            cookie_name = getattr(settings, "JWT_AUTH_COOKIE", None)
+            cookie_secure = getattr(settings, "JWT_AUTH_SECURE", False)
+            cookie_httponly = getattr(settings, "JWT_AUTH_HTTPONLY", True)
+            cookie_samesite = getattr(settings, "JWT_AUTH_SAMESITE", "Lax")
+            if cookie_name:
+
+                expiration = datetime.utcnow() + jwt_settings.ACCESS_TOKEN_LIFETIME
+                response.set_cookie(
+                    cookie_name,
+                    serializer.validated_data["access"],
+                    expires=expiration,
+                    secure=cookie_secure,
+                    httponly=cookie_httponly,
+                    samesite=cookie_samesite,
+                )
+        return response
 
 
 class ProfileView(RetrieveUpdateAPIView):
