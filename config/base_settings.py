@@ -122,7 +122,11 @@ MSAL_CONFIG = {
 AUTH_USER_MODEL = "accounts.CustomUser"
 
 """Allowed CORS origins"""
-# CORS_ORIGIN_WHITELIST = ("*",)
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:8000",
+]
+
 
 """DRF Permission and Authentication"""
 REST_FRAMEWORK = {
@@ -136,7 +140,7 @@ REST_FRAMEWORK = {
 }
 
 """Email Server setup"""
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = True
 EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
