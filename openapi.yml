@@ -1,9 +1,36 @@
 openapi: 3.0.2
 info:
-  title: "Initial API Endpoints"
+  title: "Magpie Analytics API"
   version: "0.1.0"
 paths:
-  /api/v1/user-profile/:
+  /api/v1/user/:
+    get:
+      operationId: retrieveUser
+      description: "Reads UserModel fields.
+      Accepts GET method.
+      
+      
+      Default accepted fields: None. Authentication details are sent via cookies.
+      
+      
+      Default display fields: name,  email
+      
+      
+      Read-only fields: name, email
+      
+      
+      Returns UserModel fields."
+      parameters: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+          description: ""
+      tags:
+        - api
+  /api/v1/user/profile/:
     get:
       operationId: retrieveProfile
       description: Read/Update User Profile.
@@ -65,53 +92,7 @@ paths:
           description: ""
       tags:
         - api
-  /api/v1/account/user/:
-    get:
-      operationId: retrieveUser
-      description: "ReadsUserModel fields
-
-        Accepts GET method.
-
-
-        Default accepted fields: None
-
-        Default display fields: name, email
-
-        Read-only fields: name, email
-
-
-        Returns UserModel fields."
-      parameters: []
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-          description: ""
-      tags:
-        - api
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/User"
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: "#/components/schemas/User"
-          multipart/form-data:
-            schema:
-              $ref: "#/components/schemas/User"
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-          description: ""
-      tags:
-        - api
-  /api/v1/dashboard/:
+  /api/v1/user/dashboard/:
     get:
       operationId: listDashboards
       description: Read a list of Dashboard.
@@ -127,7 +108,7 @@ paths:
           description: ""
       tags:
         - api
-  /api/v1/dashboard/{id}:
+  /api/v1/user/dashboard/{id}:
     get:
       operationId: retrieveDashboard
       description: Read a single Dashboard.
@@ -147,7 +128,70 @@ paths:
           description: ""
       tags:
         - api
-  /api/v1/account/password/reset/:
+  /api/v1/registration/:
+    post:
+      operationId: createRegistration
+      description: ""
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Registration"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/Registration"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Registration"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegistrationResponse"
+          description: ""
+      tags:
+        - api
+  /api/v1/login/:
+    post:
+      operationId: createLogin
+      description: "Check the credentials and return Tokens
+
+        if the credentials are valid and authenticated.
+
+        Calls dj-rest-auth LoginView view to set access token,
+
+        sessionid, csrftoken in http-only cookie. This cookie is
+        
+        sent in consecutive requests.
+
+
+        Accept the following POST parameters:  email, password
+
+        Return refresh token, access token and nested user object."
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Login"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/Login"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/Login"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+          description: ""
+      tags:
+        - api
+  /api/v1/password/reset/:
     post:
       operationId: createPasswordReset
       description: "Calls Django Auth PasswordResetForm save method.
@@ -173,48 +217,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PasswordReset"
+                $ref: "#/components/schemas/PasswordResetResponse"
           description: ""
       tags:
         - api
-  /api/v1/account/login/:
-    post:
-      operationId: createLogin
-      description: "Check the credentials and return the REST Token
-
-        if the credentials are valid and authenticated.
-
-        Calls Django Auth login method to register User ID
-
-        in Django session framework
-
-
-        Accept the following POST parameters: email, password
-
-        Return the REST Framework Token Object's key."
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Login"
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: "#/components/schemas/User"
-          multipart/form-data:
-            schema:
-              $ref: "#/components/schemas/Login"
-      responses:
-        "201":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Token"
-                
-          description: ""
-      tags:
-        - api
-  /api/v1/account/password/change/:
+  /api/v1/password/change/:
     post:
       operationId: createPasswordChange
       description: "Calls Django Auth SetPasswordForm save method.
@@ -240,18 +247,43 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PasswordChange"
+                $ref: "#/components/schemas/PasswordChangeResponse"
           description: ""
       tags:
         - api
-  /api/v1/account/token/refresh/:
+  /api/v1/token/verify/:
+    post:
+      operationId: createTokenVerify
+      description:
+        "Takes a token and indicates if it is valid.  This view provides
+        no
+
+        information about a token's fitness for a particular use."
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TokenVerify"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/TokenVerify"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/TokenVerify"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenVerify"
+          description: ""
+      tags:
+        - api
+  /api/v1/token/refresh/:
     post:
       operationId: createTokenRefresh
-      description:
-        "Takes a refresh type JSON web token and returns an access type
-        JSON web
-
-        token if the refresh token is valid."
+      description: Send access token as http-only cookie when refreshing token.
       parameters: []
       requestBody:
         content:
@@ -269,36 +301,36 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TokenRefresh"
+                $ref: "#/components/schemas/TokenRefreshResponse"
           description: ""
       tags:
         - api
-  /api/v1/account/registration/:
+  /api/v1/account-confirm-email/:
     post:
-      operationId: createRegistration
+      operationId: createVerifyEmail
       description: ""
       parameters: []
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Registration"
+              $ref: "#/components/schemas/VerifyEmail"
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/Registration"
+              $ref: "#/components/schemas/VerifyEmail"
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/Registration"
+              $ref: "#/components/schemas/VerifyEmail"
       responses:
         "201":
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Registration"
+                $ref: "#/components/schemas/VerifyEmail"
           description: ""
       tags:
         - api
-  /api/v1/apply-for-license/:
+  /api/v1/user/apply-for-license/:
     put:
       operationId: updateUserLicense
       description: Apply for Pro/Enterprise.
@@ -349,6 +381,16 @@ paths:
         - api
 components:
   schemas:
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+          readOnly: true
+        email:
+          type: string
+          format: email
+          readOnly: true
     Profile:
       type: object
       properties:
@@ -377,16 +419,6 @@ components:
         bank_acc:
           type: string
           readOnly: true
-    User:
-      type: object
-      properties:
-        name:
-          type: string
-          readOnly: true
-        email:
-          type: string
-          format: email
-          readOnly: true
     Dashboard:
       type: object
       properties:
@@ -405,32 +437,23 @@ components:
         - dashboard_id
         - thumbnail_url
         - license_type
-    PasswordReset:
+    Registration:
       type: object
       properties:
+        name:
+          type: string
         email:
           type: string
           format: email
-      required:
-        - email
-    PasswordResetConfirm:
+        password:
+          type: string
+        phone_no:
+          type: string
+    RegistrationResponse:
       type: object
       properties:
-        new_password1:
+        detail:
           type: string
-          maxLength: 128
-        new_password2:
-          type: string
-          maxLength: 128
-        uid:
-          type: string
-        token:
-          type: string
-      required:
-        - new_password1
-        - new_password2
-        - uid
-        - token
     Login:
       type: object
       properties:
@@ -440,7 +463,36 @@ components:
         password:
           type: string
       required:
+        - email
         - password
+    LoginResponse:
+      type: object
+      properties:
+        refresh_token:
+          type: string
+        access_token:
+          type: string
+        user:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+              format: email
+    PasswordReset:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+        - email
+    PasswordResetResponse:
+      type: object
+      properties:
+        detail:
+          type: string
     PasswordChange:
       type: object
       properties:
@@ -457,6 +509,11 @@ components:
         - old_password
         - new_password1
         - new_password2
+    PasswordChangeResponse:
+      type: object
+      properties:
+        detail:
+          type: string
     TokenVerify:
       type: object
       properties:
@@ -471,9 +528,11 @@ components:
           type: string
       required:
         - refresh
-    Registration:
+    TokenRefreshResponse:
       type: object
-      properties: {}
+      properties:
+        access:
+          type: string
     VerifyEmail:
       type: object
       properties:
@@ -493,22 +552,3 @@ components:
           type: string
         applied_license_qt:
           type: integer
-    Token:
-      type: object
-      properties:
-        access_token:
-          type: string
-          readOnly: true
-        refresh_token:
-          type: string
-          readOnly: true
-        user:
-          type: object
-          properties:
-            name:
-              type: string
-              readOnly: true
-            email:
-              type: string
-              format: email
-              readOnly: true
