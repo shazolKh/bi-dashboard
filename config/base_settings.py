@@ -4,17 +4,18 @@ from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+SECRET_KEY = os.getenv("SECRET_KEY")
+DEBUG = False
+
 """Load ENV Globally when in dev"""
 if os.environ.get("DJANGO_ENV") != "production":
     from dotenv import load_dotenv
 
     ENV_PATH = Path.joinpath(BASE_DIR, ".env")
     load_dotenv(dotenv_path=ENV_PATH)
+    DEBUG = True
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-DEBUG = os.getenv("DEBUG")
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -123,11 +124,8 @@ MSAL_CONFIG = {
 AUTH_USER_MODEL = "accounts.CustomUser"
 
 """Allowed CORS origins"""
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:8000",
-]
-
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = ["*"]
 
 """DRF Permission and Authentication"""
 REST_FRAMEWORK = {
@@ -180,3 +178,7 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 """SIMPLEJWT Config"""
 REST_USE_JWT = True
 JWT_AUTH_COOKIE = "atok"
+JWT_AUTH_SECURE = True
+REST_SESSION_LOGIN = False
+JWT_AUTH_COOKIE_USE_CSRF = False
+JWT_AUTH_SAMESITE = "None"
