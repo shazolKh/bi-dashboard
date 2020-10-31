@@ -69,5 +69,12 @@ python manage.py runserver
   - Finalize Email templates
   - Add static pages(Email confirm/Password Reset/Password change confirm)
 
-- :white_check_mark: Setup server and Database
+- :heavy_check_mark: Setup server and Database
+
   - PostgreSQL Database setup and backup
+  - Setup Server
+  - Fixed CORS and HTTP-ONLY Cookies
+
+- :heavy_check_mark: Issues to Solve
+  - Create an endpoint for checking if mobile number is unique
+  - Create logout endpoint(important)
