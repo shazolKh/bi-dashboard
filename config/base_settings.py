@@ -124,8 +124,10 @@ MSAL_CONFIG = {
 AUTH_USER_MODEL = "accounts.CustomUser"
 
 """Allowed CORS origins"""
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = ["*"]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:8000",
+]
 
 """DRF Permission and Authentication"""
 REST_FRAMEWORK = {
