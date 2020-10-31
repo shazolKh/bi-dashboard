@@ -1,19 +1,20 @@
 import os
 from pathlib import Path
 from datetime import timedelta
-from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-ENV_PATH = Path.joinpath(BASE_DIR, ".env")
 
-"""Load ENV Globally"""
-load_dotenv(dotenv_path=ENV_PATH)
+"""Load ENV Globally when in dev"""
+if os.environ.get("DJANGO_ENV") != "production":
+    from dotenv import load_dotenv
+
+    ENV_PATH = Path.joinpath(BASE_DIR, ".env")
+    load_dotenv(dotenv_path=ENV_PATH)
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = ["*"]
-
+ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -162,12 +163,8 @@ OLD_PASSWORD_FIELD_ENABLED = True
 # ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
 """Redirect user to client-side login page after Email confirmation"""
-ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = (
-    "https://django-react-jwt.netlify.app/"
-)
-ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = (
-    "https://django-react-jwt.netlify.app/"
-)
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = os.getenv("CLIENT_SITE")
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = os.getenv("CLIENT_SITE")
 
 SITE_ID = 1
 
