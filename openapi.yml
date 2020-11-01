@@ -191,6 +191,19 @@ paths:
           description: ""
       tags:
         - api
+  /api/v1/logout/:
+    post:
+      operationId: logoutUser
+      description: Logs out an User by deleting JWT Token.
+      parameters: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LogOutResponse"
+      tags:
+        - api
   /api/v1/password/reset/:
     post:
       operationId: createPasswordReset
@@ -480,6 +493,11 @@ components:
             email:
               type: string
               format: email
+    LogOutResponse:
+      type: object
+      properties:
+        detail:
+          type: string
     PasswordReset:
       type: object
       properties:
