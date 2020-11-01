@@ -13,11 +13,21 @@ from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework_simplejwt.settings import api_settings as jwt_settings
 
+from dj_rest_auth.views import LogoutView
+
 from .models import Profile, UserLicense
 from .serializers import (
     ProfileSerializer,
     LicenseUpdateSerializer,
 )
+
+
+class CustomLogoutView(LogoutView):
+    """
+    Update logout to be auth user only.
+    """
+
+    permission_classes = (IsAuthenticated,)
 
 
 class CustomTokenRefreshView(TokenViewBase):

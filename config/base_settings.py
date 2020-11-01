@@ -4,7 +4,6 @@ from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = False
 
 """Load ENV Globally when in dev"""
@@ -15,7 +14,9 @@ if os.environ.get("DJANGO_ENV") != "production":
     load_dotenv(dotenv_path=ENV_PATH)
     DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -106,6 +107,12 @@ USE_TZ = True
 """Static Assets"""
 STATIC_URL = "/static/"
 
+"""Change Django login Samesites"""
+SESSION_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SECURE = True
+
 """MSAL Configuration"""
 MSAL_CONFIG = {
     "AUTHENTICATION_MODE": os.getenv("AUTHENTICATION_MODE"),
@@ -180,7 +187,3 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 """SIMPLEJWT Config"""
 REST_USE_JWT = True
 JWT_AUTH_COOKIE = "atok"
-JWT_AUTH_SECURE = True
-REST_SESSION_LOGIN = False
-JWT_AUTH_COOKIE_USE_CSRF = False
-JWT_AUTH_SAMESITE = "None"

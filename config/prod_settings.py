@@ -37,3 +37,7 @@ DATABASES = {
         "PASSWORD": os.environ["DBPASS"],
     }
 }
+
+"""SIMPLEJWT Cookie Properties"""
+JWT_AUTH_SECURE = True
+JWT_AUTH_SAMESITE = "None"
