@@ -2,8 +2,9 @@ from datetime import datetime
 from django.conf import settings
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.generics import (
+    RetrieveAPIView,
     UpdateAPIView,
     RetrieveUpdateAPIView,
     get_object_or_404,
@@ -17,9 +18,24 @@ from dj_rest_auth.views import LogoutView
 
 from .models import Profile, UserLicense
 from .serializers import (
+    RetrievePhoneSerializer,
     ProfileSerializer,
     LicenseUpdateSerializer,
 )
+
+
+class RetrievePhoneView(RetrieveAPIView):
+    """
+    Lookup user by phone number.
+    """
+
+    permission_classes = (AllowAny,)
+    queryset = Profile.objects.all()
+    serializer_class = RetrievePhoneSerializer
+
+    def get_object(self):
+        qs = self.get_queryset()
+        return get_object_or_404(qs, phone_no=self.request.data["phone_no"])
 
 
 class CustomLogoutView(LogoutView):
@@ -35,6 +51,7 @@ class CustomTokenRefreshView(TokenViewBase):
     Send access token as http-only cookie when refreshing token.
     """
 
+    permission_classes = (IsAuthenticated,)
     serializer_class = TokenRefreshSerializer
 
     def post(self, request, *args, **kwargs):

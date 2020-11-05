@@ -1,11 +1,23 @@
 from django.utils import timezone
+from django.core import serializers as serial
 from rest_framework import serializers
 from allauth.account.signals import user_logged_in
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from dj_rest_auth.registration.serializers import setup_user_email
 from dj_rest_auth.serializers import UserDetailsSerializer, LoginSerializer
 
 from .signals import login_signal
 from .models import CustomUser, Profile, License, UserLicense
+
+
+class RetrievePhoneSerializer(serializers.Serializer):
+    """
+    Retrieve phone number from profile.
+    """
+
+    class Meta:
+        model = Profile
+        fields = ("phone_no",)
 
 
 class RegistrationSerializer(serializers.Serializer):
@@ -58,17 +70,52 @@ class LoginSerializer(LoginSerializer):
         return user
 
 
-class ProfileSerializer(UserDetailsSerializer):
+class LicenseSerializer(serializers.ModelSerializer):
+    """
+    Retrieve license details of an user.
+    """
+
+    class Meta:
+        model = UserLicense
+        fields = (
+            "assigned_license",
+            "current_license_qt",
+            "current_license_price",
+            "iat",
+            "eat",
+            "total_price",
+            "applied_license",
+            "applied_license_qt",
+        )
+        read_only_fields = (
+            "assigned_license",
+            "current_license_qt",
+            "current_license_price",
+            "iat",
+            "eat",
+            "total_price",
+            "applied_license",
+            "applied_license_qt",
+        )
+
+
+class ProfileSerializer(serializers.ModelSerializer):
     """
     Show Profile with User model information nested inside.
     """
 
     user = UserSerializer(read_only=True)
+    user_license = serializers.SerializerMethodField()
+
+    def get_user_license(self, obj):
+        user_license = UserLicense.objects.get(user=obj.user)
+        return LicenseSerializer(user_license).data
 
     class Meta:
         model = Profile
         fields = (
             "user",
+            "user_license",
             "phone_no",
             "org_name",
             "address",

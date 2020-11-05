@@ -38,6 +38,12 @@ DATABASES = {
     }
 }
 
+"""Change Django login Samesites"""
+SESSION_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SECURE = True
+
 """SIMPLEJWT Cookie Properties"""
 JWT_AUTH_SECURE = True
 JWT_AUTH_SAMESITE = "None"

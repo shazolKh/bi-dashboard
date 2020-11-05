@@ -3,6 +3,20 @@ info:
   title: "Magpie Analytics API"
   version: "0.1.0"
 paths:
+  /api/v1/is-phone-valid/:
+    get:
+      operationId: retrieveProfile
+      description: Lookup user by phone number.
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetrievePhone'
+          description: ''
+      tags:
+      - api
   /api/v1/user/:
     get:
       operationId: retrieveUser
@@ -264,35 +278,6 @@ paths:
           description: ""
       tags:
         - api
-  /api/v1/token/verify/:
-    post:
-      operationId: createTokenVerify
-      description:
-        "Takes a token and indicates if it is valid.  This view provides
-        no
-
-        information about a token's fitness for a particular use."
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/TokenVerify"
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: "#/components/schemas/TokenVerify"
-          multipart/form-data:
-            schema:
-              $ref: "#/components/schemas/TokenVerify"
-      responses:
-        "201":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TokenVerify"
-          description: ""
-      tags:
-        - api
   /api/v1/token/refresh/:
     post:
       operationId: createTokenRefresh
@@ -418,6 +403,33 @@ components:
               format: email
               readOnly: true
           readOnly: true
+        user_license:
+          type: object
+          properties:
+            assigned_license:
+              type: UUID
+              readOnly: true
+            current_license_qt:
+              type: number
+              readOnly: true
+            current_license_price:
+              type: number
+              readOnly: true
+            iat:
+              type: string
+              readOnly: true
+            eat:
+              type: string
+              readOnly: true
+            total_price:
+              type: number
+              readOnly: true
+            applied_license:
+              type: string
+              readOnly: true
+            applied_license_qt:
+              type: number
+              readOnly: true
         phone_no:
           type: string
           readOnly: true
@@ -570,3 +582,6 @@ components:
           type: string
         applied_license_qt:
           type: integer
+    RetrievePhone:
+      type: object
+      properties: {}

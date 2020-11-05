@@ -107,12 +107,6 @@ USE_TZ = True
 """Static Assets"""
 STATIC_URL = "/static/"
 
-"""Change Django login Samesites"""
-SESSION_COOKIE_SAMESITE = "None"
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = "None"
-CSRF_COOKIE_SECURE = True
-
 """MSAL Configuration"""
 MSAL_CONFIG = {
     "AUTHENTICATION_MODE": os.getenv("AUTHENTICATION_MODE"),
@@ -134,6 +128,7 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:8000",
+    "https://magpiereport.web.app",
 ]
 
 """DRF Permission and Authentication"""

@@ -10,6 +10,7 @@ from dj_rest_auth.views import (
 from dj_rest_auth.registration.views import RegisterView
 
 from .views import (
+    RetrievePhoneView,
     CustomLogoutView,
     ProfileView,
     LicenseUpdateView,
@@ -20,6 +21,11 @@ app_name = "accounts"
 
 urlpatterns = [
     # URLs that do not require a session or valid token
+    path(
+        "is-phone-valid/",
+        RetrievePhoneView.as_view(),
+        name="retrieve_phone",
+    ),
     path("registration/", RegisterView.as_view(), name="rest_register"),
     path("login/", LoginView.as_view(), name="rest_login"),
     path("logout/", CustomLogoutView.as_view(), name="rest_logout"),
