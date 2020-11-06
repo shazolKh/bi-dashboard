@@ -9,7 +9,7 @@ from rest_framework.generics import (
     RetrieveUpdateAPIView,
     get_object_or_404,
 )
-from rest_framework_simplejwt.views import TokenViewBase
+from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework_simplejwt.settings import api_settings as jwt_settings
@@ -46,13 +46,12 @@ class CustomLogoutView(LogoutView):
     permission_classes = (IsAuthenticated,)
 
 
-class CustomTokenRefreshView(TokenViewBase):
+class CustomTokenRefreshView(TokenRefreshView):
     """
     Send access token as http-only cookie when refreshing token.
     """
 
-    permission_classes = (IsAuthenticated,)
-    serializer_class = TokenRefreshSerializer
+    # permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

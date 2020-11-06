@@ -143,7 +143,7 @@ REST_FRAMEWORK = {
 }
 
 """Email Server setup"""
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_USE_TLS = True
 EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
@@ -182,3 +182,8 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 """SIMPLEJWT Config"""
 REST_USE_JWT = True
 JWT_AUTH_COOKIE = "atok"
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=14),
+}
