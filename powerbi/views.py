@@ -43,17 +43,11 @@ class DashboardListView(ListAPIView):
                 or dashboard_license.license_type == "enterprise"
             ):
                 dashboard["dashboard_id"] = ""
-            elif user_license.license_type == "trial" and (
-                dashboard_license.license_type == "pro"
-                or dashboard_license.license_type == "enterprise"
-            ):
-                dashboard["dashboard_id"] = ""
             elif (
-                user_license.license_type == "pro"
-                and dashboard_license.license_type == "enterprise"
-            ):
+                user_license.license_type == "trial"
+                or user_license.license_type == "pro"
+            ) and dashboard_license.license_type == "enterprise":
                 dashboard["dashboard_id"] = ""
-
             elif (
                 user_license.license_type == "enterprise"
                 and dashboard_license.name != user_license.name

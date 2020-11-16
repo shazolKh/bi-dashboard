@@ -194,6 +194,7 @@ class UserLicenseAdmin(admin.ModelAdmin):
         "total_price",
         "applied_license",
         "applied_license_qt",
+        "applied_for_pro",
     )
 
     def save_model(self, request, obj, form, change):

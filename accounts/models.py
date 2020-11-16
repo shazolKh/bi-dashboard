@@ -72,7 +72,7 @@ class License(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     LICENSE_CHOICES = (
         ("free", "Free"),
-        ("trial", "Trial"),
+        ("trial", "Pro Trial"),
         ("pro", "Professional"),
         ("enterprise", "Enterprise"),
     )
@@ -115,6 +115,7 @@ class UserLicense(models.Model):
     eat = models.DateTimeField(_("License Expires at"), auto_now_add=True)
 
     total_price = models.PositiveIntegerField(_("Total Price"), default=0)
+    applied_for_pro = models.BooleanField(_("Applied For Pro"), default=False)
 
     LICENSE_CHOICES = (
         ("free", "Free"),

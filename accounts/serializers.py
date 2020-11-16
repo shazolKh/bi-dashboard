@@ -75,10 +75,15 @@ class LicenseSerializer(serializers.ModelSerializer):
     Retrieve license details of an user.
     """
 
+    assigned_license_name = serializers.SerializerMethodField()
+
+    def get_assigned_license_name(self, obj):
+        return obj.assigned_license.license_type
+
     class Meta:
         model = UserLicense
         fields = (
-            "assigned_license",
+            "assigned_license_name",
             "current_license_qt",
             "current_license_price",
             "iat",
@@ -86,9 +91,10 @@ class LicenseSerializer(serializers.ModelSerializer):
             "total_price",
             "applied_license",
             "applied_license_qt",
+            "applied_for_pro",
         )
         read_only_fields = (
-            "assigned_license",
+            "assigned_license_name",
             "current_license_qt",
             "current_license_price",
             "iat",
@@ -96,6 +102,7 @@ class LicenseSerializer(serializers.ModelSerializer):
             "total_price",
             "applied_license",
             "applied_license_qt",
+            "applied_for_pro",
         )
 
 
@@ -109,6 +116,23 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def get_user_license(self, obj):
         user_license = UserLicense.objects.get(user=obj.user)
+
+        """Checks if trial expired"""
+        if (
+            user_license.assigned_license.license_type == "trial"
+            and timezone.now() > user_license.eat
+        ):
+            default_free = License.objects.get(license_type="free")
+
+            user_license.assigned_license = default_free
+            user_license.current_license_price = default_free.price
+            user_license.current_license_qt = 1
+
+            user_license.iat = timezone.now()
+            user_license.eat = timezone.now()
+
+            user_license.save()
+
         return LicenseSerializer(user_license).data
 
     class Meta:
@@ -148,8 +172,12 @@ class LicenseUpdateSerializer(serializers.ModelSerializer):
         current_license = instance.assigned_license
         new_instance = instance
 
-        if current_license.license_type == "free":
+        if (
+            current_license.license_type == "free"
+            and new_instance.applied_for_pro == False
+        ):
             """Create default trial license and user license to that"""
+
             default_trial = License.objects.get(license_type="trial")
 
             new_instance.assigned_license = default_trial
@@ -158,6 +186,8 @@ class LicenseUpdateSerializer(serializers.ModelSerializer):
 
             new_instance.iat = timezone.now()
             new_instance.eat = timezone.now() + default_trial.duration
+
+            new_instance.applied_for_pro = True
 
         if not (
             current_license.license_type == "trial"
