@@ -22,7 +22,7 @@ app_name = "accounts"
 urlpatterns = [
     # URLs that do not require a session or valid token
     path(
-        "is-phone-valid/",
+        "is-phone-valid/<str:phone_no>",
         RetrievePhoneView.as_view(),
         name="retrieve_phone",
     ),

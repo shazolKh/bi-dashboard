@@ -35,7 +35,8 @@ class RetrievePhoneView(RetrieveAPIView):
 
     def get_object(self):
         qs = self.get_queryset()
-        return get_object_or_404(qs, phone_no=self.request.data["phone_no"])
+        phone_no = self.kwargs["phone_no"]
+        return get_object_or_404(qs, phone_no=phone_no)
 
 
 class CustomLogoutView(LogoutView):
