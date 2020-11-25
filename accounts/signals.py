@@ -4,30 +4,7 @@ from django.contrib.auth.models import Group, Permission
 
 from ipware import get_client_ip
 
-from .models import CustomUser, LoginEntry, Profile, License, UserLicense
-
-
-def create_staff_group(sender, **kwargs):
-    """
-    Create Staff group after migrate command on post_migrate signal.
-    """
-    permissions = [
-        Permission.objects.get(codename="add_profile"),
-        Permission.objects.get(codename="change_profile"),
-        Permission.objects.get(codename="view_profile"),
-        Permission.objects.get(codename="delete_profile"),
-    ]
-    group = Group.objects.create(name="Staff")
-    [group.permissions.add(permission) for permission in permissions]
-
-
-def add_admin_permission(sender, instance, created, **kwargs):
-    """
-    Add user with is_staff to Staff group on post_save signal.
-    """
-    if created and instance.is_staff:
-        staff_group = Group.objects.get(name="Staff")
-        staff_group.user_set.add(instance)
+from .models import LoginEntry, Profile, License, UserLicense
 
 
 def change_user_profile(sender, instance, created, **kwargs):
