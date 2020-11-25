@@ -63,6 +63,26 @@ class Profile(models.Model):
         return self.user.email
 
 
+class Feedback(models.Model):
+    """
+    User feedback
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name=_("User"), on_delete=models.CASCADE
+    )
+    subject = models.TextField(_("Subject"))
+    description = models.TextField(_("Description"))
+
+    class Meta:
+        verbose_name = _("feedback")
+        verbose_name_plural = _("feedbacks")
+
+    def __str__(self):
+        return self.user.email
+
+
 class License(models.Model):
 
     """

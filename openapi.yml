@@ -8,6 +8,11 @@ paths:
       operationId: retrieveProfile
       description: Lookup user by phone number.
       parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Phone"
       responses:
         '200':
           content:
@@ -106,6 +111,29 @@ paths:
           description: ""
       tags:
         - api
+  
+  /api/v1/user/feedback:
+    post:
+      operationId: userFeedback
+      description: Collect user feedback.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Feedback"
+
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feedback'
+          description: ''
+      tags:
+      - api
+
+  
   /api/v1/user/dashboard/:
     get:
       operationId: listDashboards
@@ -585,3 +613,15 @@ components:
     RetrievePhone:
       type: object
       properties: {}
+    Phone:
+      type: object
+      properties:
+        phone_no: 
+          type: string
+    Feedback:
+      type: object
+      properties:
+        subject:
+          type: string
+        description:
+          type: string

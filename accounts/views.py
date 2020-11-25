@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.generics import (
+    CreateAPIView,
     RetrieveAPIView,
     UpdateAPIView,
     RetrieveUpdateAPIView,
@@ -18,6 +19,7 @@ from dj_rest_auth.views import LogoutView
 
 from .models import Profile, UserLicense
 from .serializers import (
+    FeedbackSerializer,
     RetrievePhoneSerializer,
     ProfileSerializer,
     LicenseUpdateSerializer,
@@ -96,6 +98,19 @@ class ProfileView(RetrieveUpdateAPIView):
     def get_object(self):
         qs = self.get_queryset()
         return get_object_or_404(qs, user=self.request.user)
+
+
+class FeedbackView(CreateAPIView):
+    """
+    Create User Feedback.
+    """
+
+    permission_classes = (IsAuthenticated,)
+    serializer_class = FeedbackSerializer
+
+    def post(self, request, *args, **kwargs):
+        request.data["user"] = request.user.id
+        return self.create(request, *args, **kwargs)
 
 
 class LicenseUpdateView(UpdateAPIView):

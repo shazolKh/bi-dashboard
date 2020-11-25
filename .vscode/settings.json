@@ -5,6 +5,7 @@
         "MSAL",
         "atok",
         "ipware",
-        "powerbi"
+        "powerbi",
+        "simplejwt"
     ]
 }

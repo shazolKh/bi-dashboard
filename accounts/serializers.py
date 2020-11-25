@@ -1,3 +1,4 @@
+from django.db.models import fields
 from django.utils import timezone
 from django.core import serializers as serial
 from rest_framework import serializers
@@ -7,7 +8,7 @@ from dj_rest_auth.registration.serializers import setup_user_email
 from dj_rest_auth.serializers import UserDetailsSerializer, LoginSerializer
 
 from .signals import login_signal
-from .models import CustomUser, Profile, License, UserLicense
+from .models import CustomUser, Profile, License, UserLicense, Feedback
 
 
 class RetrievePhoneSerializer(serializers.Serializer):
@@ -51,6 +52,67 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = (
             "name",
             "email",
+        )
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    """
+    Show Profile with User model information nested inside.
+    """
+
+    user = UserSerializer(read_only=True)
+    user_license = serializers.SerializerMethodField()
+
+    def get_user_license(self, obj):
+        user_license = UserLicense.objects.get(user=obj.user)
+
+        """Checks if trial expired"""
+        if (
+            user_license.assigned_license.license_type == "trial"
+            and timezone.now() > user_license.eat
+        ):
+            default_free = License.objects.get(license_type="free")
+
+            user_license.assigned_license = default_free
+            user_license.current_license_price = default_free.price
+            user_license.current_license_qt = 1
+
+            user_license.iat = timezone.now()
+            user_license.eat = timezone.now()
+
+            user_license.save()
+
+        return LicenseSerializer(user_license).data
+
+    class Meta:
+        model = Profile
+        fields = (
+            "user",
+            "user_license",
+            "phone_no",
+            "org_name",
+            "address",
+            "bank_name",
+            "bank_acc",
+        )
+        read_only_fields = (
+            "phone_no",
+            "bank_name",
+            "bank_acc",
+        )
+
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    """
+    Create feedback.
+    """
+
+    class Meta:
+        model = Feedback
+        fields = (
+            "user",
+            "subject",
+            "description",
         )
 
 
@@ -103,53 +165,6 @@ class LicenseSerializer(serializers.ModelSerializer):
             "applied_license",
             "applied_license_qt",
             "applied_for_pro",
-        )
-
-
-class ProfileSerializer(serializers.ModelSerializer):
-    """
-    Show Profile with User model information nested inside.
-    """
-
-    user = UserSerializer(read_only=True)
-    user_license = serializers.SerializerMethodField()
-
-    def get_user_license(self, obj):
-        user_license = UserLicense.objects.get(user=obj.user)
-
-        """Checks if trial expired"""
-        if (
-            user_license.assigned_license.license_type == "trial"
-            and timezone.now() > user_license.eat
-        ):
-            default_free = License.objects.get(license_type="free")
-
-            user_license.assigned_license = default_free
-            user_license.current_license_price = default_free.price
-            user_license.current_license_qt = 1
-
-            user_license.iat = timezone.now()
-            user_license.eat = timezone.now()
-
-            user_license.save()
-
-        return LicenseSerializer(user_license).data
-
-    class Meta:
-        model = Profile
-        fields = (
-            "user",
-            "user_license",
-            "phone_no",
-            "org_name",
-            "address",
-            "bank_name",
-            "bank_acc",
-        )
-        read_only_fields = (
-            "phone_no",
-            "bank_name",
-            "bank_acc",
         )
 
 

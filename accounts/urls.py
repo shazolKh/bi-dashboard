@@ -13,6 +13,7 @@ from .views import (
     RetrievePhoneView,
     CustomLogoutView,
     ProfileView,
+    FeedbackView,
     LicenseUpdateView,
     CustomTokenRefreshView,
 )
@@ -37,6 +38,7 @@ urlpatterns = [
     # URLs that require a user to be logged in with a valid session / token.
     path("user/", UserDetailsView.as_view(), name="rest_user_details"),
     path("user/profile/", ProfileView.as_view()),
+    path("user/feedback/", FeedbackView.as_view()),
     path("user/dashboard/", include("powerbi.urls")),
     path("user/apply-for-license/", LicenseUpdateView.as_view()),
     path(

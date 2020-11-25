@@ -4,6 +4,10 @@ from allauth.account.signals import user_logged_in
 
 
 class AccountsConfig(AppConfig):
+    """
+    Account app config to store signals.
+    """
+
     name = "accounts"
 
     def ready(self):
@@ -23,5 +27,4 @@ class AccountsConfig(AppConfig):
         post_migrate.connect(create_staff_group, sender=self)
         post_save.connect(add_admin_permission, sender=CustomUser)
         post_save.connect(change_user_profile, sender=CustomUser)
-        # user_logged_in.connect(store_login_information)
         login_signal.connect(store_login_information)

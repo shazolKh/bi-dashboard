@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm, LicenseForm
-from .models import CustomUser, Profile, License, UserLicense, LoginEntry
+from .models import CustomUser, Profile, License, UserLicense, LoginEntry, Feedback
 
 
 @admin.register(CustomUser)
@@ -147,6 +147,27 @@ class ProfileAdmin(admin.ModelAdmin):
 
     ordering = [
         "-user__created_at",
+    ]
+
+
+@admin.register(Feedback)
+class FeedbackAdmin(admin.ModelAdmin):
+    """
+    Feedback Config in Admin Site.
+    """
+
+    model = Feedback
+    list_display = (
+        "user",
+        "subject",
+        "description",
+    )
+
+    list_filter = ("user",)
+    search_fields = ("user",)
+
+    ordering = [
+        "user",
     ]
 
 
