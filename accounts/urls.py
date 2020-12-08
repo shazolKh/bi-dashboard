@@ -4,7 +4,6 @@ from django.urls import path, include
 from dj_rest_auth.views import (
     LoginView,
     PasswordChangeView,
-    PasswordResetView,
     UserDetailsView,
 )
 from dj_rest_auth.registration.views import RegisterView
@@ -16,6 +15,7 @@ from .views import (
     FeedbackView,
     LicenseUpdateView,
     CustomTokenRefreshView,
+    CustomPasswordResetView,
 )
 
 app_name = "accounts"
@@ -32,7 +32,7 @@ urlpatterns = [
     path("logout/", CustomLogoutView.as_view(), name="rest_logout"),
     path(
         "password/reset/",
-        PasswordResetView.as_view(),
+        CustomPasswordResetView.as_view(),
         name="rest_password_reset",
     ),
     # URLs that require a user to be logged in with a valid session / token.

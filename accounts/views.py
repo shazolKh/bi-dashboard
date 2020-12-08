@@ -1,5 +1,6 @@
 from datetime import datetime
 from django.conf import settings
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -15,9 +16,9 @@ from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework_simplejwt.settings import api_settings as jwt_settings
 
-from dj_rest_auth.views import LogoutView
+from dj_rest_auth.views import LogoutView, PasswordResetView
 
-from .models import Profile, UserLicense
+from .models import Profile, UserLicense, CustomUser
 from .serializers import (
     FeedbackSerializer,
     RetrievePhoneSerializer,
@@ -39,6 +40,16 @@ class RetrievePhoneView(RetrieveAPIView):
         qs = self.get_queryset()
         phone_no = self.kwargs["phone_no"]
         return get_object_or_404(qs, phone_no=phone_no)
+
+
+class CustomPasswordResetView(PasswordResetView):
+    """
+    Check if email exists before resetting password.
+    """
+
+    def post(self, request, *args, **kwargs):
+        data = get_object_or_404(CustomUser.objects.all(), email=request.data["email"])
+        return super().post(request=request, args=args, kwargs=kwargs)
 
 
 class CustomLogoutView(LogoutView):
