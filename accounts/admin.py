@@ -31,7 +31,15 @@ class CustomUserAdmin(UserAdmin):
     """CustomUserChangeForm fields"""
     fieldsets = (
         ("Information", {"fields": ("name", "email", "password")}),
-        ("Permission", {"fields": ("is_staff", "is_active")}),
+        ("Permissions", {
+            "fields": (
+                "is_staff",
+                "is_active",
+                'is_superuser',
+                'groups',
+                'user_permissions',
+            )
+        }),
     )
     """CustomUserCreationForm fields"""
     add_fieldsets = (
