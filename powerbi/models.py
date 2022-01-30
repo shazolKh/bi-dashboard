@@ -19,3 +19,20 @@ class Dashboard(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class PublicDashboard(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    title = models.CharField(_("Dashboard Name"), max_length=250, blank=True)
+    dashboard_url = models.CharField(_("Dashboard URL"), max_length=250, unique=True)
+    thumbnail_url = models.CharField(_("Thumbnail URL"), max_length=250)
+
+    created_at = models.DateTimeField(_("Created at"), auto_now=False, auto_now_add=True)
+    modified_at = models.DateTimeField(_("Modified at"), auto_now=True, auto_now_add=False)
+
+    class Meta:
+        verbose_name = _("Public Dashboard")
+        verbose_name_plural = _("Public Dashboards")
+
+    def __str__(self):
+        return self.title

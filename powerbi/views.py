@@ -7,9 +7,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView, RetrieveAPIView, get_object_or_404
 
-from .models import Dashboard
+from .models import Dashboard, PublicDashboard
 from accounts.models import License
-from .serializers import DashboardSerializer
+from .serializers import DashboardSerializer, PublicDashboardSerializer, SinglePublicDashboardSerializer
 from .utils import checkconfig, getaccesstoken, getembedinfo
 
 
@@ -93,3 +93,25 @@ class DashboardView(RetrieveAPIView):
                 return Response(embedinfo)
         except Exception as ex:
             return Response(ex)
+
+
+class PublicDashboardListAPIView(ListAPIView):
+    """
+    Get all the dashboard from database
+    """
+    permission_classes = [IsAuthenticated]
+    serializer_class = PublicDashboardSerializer
+    queryset = PublicDashboard.objects.all()
+
+
+class SingleDashboardAPIView(RetrieveAPIView):
+    """
+    List of all the notifications of a customer
+    """
+    permission_classes = [IsAuthenticated]
+    serializer_class = SinglePublicDashboardSerializer
+    queryset = PublicDashboard.objects.all()
+
+    def get_queryset(self):
+        pk = self.kwargs.get("pk")
+        return super().get_queryset().filter(pk=pk)

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Dashboard
+from .models import Dashboard, PublicDashboard
 
 
 class DashboardSerializer(serializers.ModelSerializer):
@@ -15,4 +15,34 @@ class DashboardSerializer(serializers.ModelSerializer):
             "dashboard_id",
             "thumbnail_url",
             "license_type",
+        )
+
+
+class PublicDashboardSerializer(serializers.ModelSerializer):
+    """
+    Serializes a public dashboard.
+    """
+
+    class Meta:
+        model = PublicDashboard
+        fields = (
+            'id',
+            "title",
+            # "dashboard_url",
+            "thumbnail_url",
+        )
+
+
+class SinglePublicDashboardSerializer(serializers.ModelSerializer):
+    """
+    Serializes a public dashboard.
+    """
+
+    class Meta:
+        model = PublicDashboard
+        fields = (
+            'id',
+            "title",
+            "dashboard_url",
+            # "thumbnail_url",
         )
