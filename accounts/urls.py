@@ -16,6 +16,9 @@ from .views import (
     LicenseUpdateView,
     CustomTokenRefreshView,
     CustomPasswordResetView,
+    InitPasswordResetAPIView,
+    PasswordResetAPIView,
+    VerifyPasswordResetAPIView,
 )
 
 app_name = "accounts"
@@ -30,22 +33,20 @@ urlpatterns = [
     path("registration/", RegisterView.as_view(), name="rest_register"),
     path("login/", LoginView.as_view(), name="rest_login"),
     path("logout/", CustomLogoutView.as_view(), name="rest_logout"),
-    path(
-        "password/reset/",
-        CustomPasswordResetView.as_view(),
-        name="rest_password_reset",
-    ),
+    path("password/reset/", CustomPasswordResetView.as_view(), name="rest_password_reset"),
+
+    path("password-reset/init/", InitPasswordResetAPIView.as_view(), name="init-password-reset"),
+    path("password-reset/verify/", VerifyPasswordResetAPIView.as_view(), name="verify-password-reset"),
+    path("password-reset/complete/", PasswordResetAPIView.as_view(), name="complete-password-reset"),
+
     # URLs that require a user to be logged in with a valid session / token.
     path("user/", UserDetailsView.as_view(), name="rest_user_details"),
     path("user/profile/", ProfileView.as_view()),
     path("user/feedback/", FeedbackView.as_view()),
     path("user/dashboard/", include("powerbi.urls")),
     path("user/apply-for-license/", LicenseUpdateView.as_view()),
-    path(
-        "password/change/",
-        PasswordChangeView.as_view(),
-        name="rest_password_change",
-    ),
+
+    path("password/change/", PasswordChangeView.as_view(), name="rest_password_change"),
 ]
 
 if getattr(settings, "REST_USE_JWT", False):
