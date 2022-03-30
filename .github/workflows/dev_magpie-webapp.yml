@@ -34,6 +34,7 @@ jobs:
       SECRET_KEY: $SECRET_KEY
       TENANT_ID: $TENANT_ID
       WORKSPACE_ID: $WORKSPACE_ID
+      OTP_TOKEN: $OTP_TOKEN
 
     steps:
       - uses: actions/checkout@v2
