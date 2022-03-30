@@ -1,6 +1,5 @@
 from django.utils import timezone
 from django.dispatch import Signal
-from django.contrib.auth.models import Group, Permission
 
 from ipware import get_client_ip
 

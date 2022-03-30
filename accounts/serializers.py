@@ -1,14 +1,10 @@
-from django.db.models import fields
 from django.utils import timezone
-from django.core import serializers as serial
 from rest_framework import serializers
-from allauth.account.signals import user_logged_in
-from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from dj_rest_auth.registration.serializers import setup_user_email
-from dj_rest_auth.serializers import UserDetailsSerializer, LoginSerializer
+from dj_rest_auth.serializers import LoginSerializer
 
 from .signals import login_signal
-from .models import CustomUser, Profile, License, UserLicense, Feedback
+from .models import CustomUser, Profile, License, UserLicense, Feedback, PasswordReset
 
 
 class RetrievePhoneSerializer(serializers.Serializer):
@@ -214,3 +210,13 @@ class LicenseUpdateSerializer(serializers.ModelSerializer):
 
         new_instance.save()
         return new_instance
+
+
+class InitPasswordResetSerializer(serializers.ModelSerializer):
+    """
+    Serialize password reset requests.
+    """
+
+    class Meta:
+        model = PasswordReset
+        fields = ("user", 'phone_no', "otp_code")
