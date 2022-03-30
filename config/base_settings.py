@@ -107,6 +107,7 @@ USE_TZ = True
 
 """Static Assets"""
 STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 """MSAL Configuration"""
 MSAL_CONFIG = {
