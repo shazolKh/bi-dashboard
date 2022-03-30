@@ -12,3 +12,4 @@ yaml_swagger.py
 db.sqlite3
 azure_env.sh
 .env
+example.py
