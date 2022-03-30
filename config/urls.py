@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
 from dj_rest_auth.registration.views import VerifyEmailView, ConfirmEmailView
-from django.views.generic import TemplateView
+from drf_spectacular.views import (
+    SpectacularSwaggerView,
+    SpectacularAPIView,
+)
 
 from django.contrib.auth.views import (
     PasswordResetConfirmView,
@@ -31,4 +34,7 @@ urlpatterns = [
         PasswordResetCompleteView.as_view(),
         name="password_reset_complete",
     ),
+    path("schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+
 ]
