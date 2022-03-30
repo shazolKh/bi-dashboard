@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "dj_rest_auth.registration",
     "corsheaders",
     "durationwidget",
+    "drf_spectacular",
     # custom
     "accounts.apps.AccountsConfig",
     "powerbi.apps.PowerbiConfig",
@@ -130,6 +131,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     os.getenv("CLIENT_SITE"),
 ]
+CORS_ALLOW_CREDENTIALS = True
 
 """DRF Permission and Authentication"""
 REST_FRAMEWORK = {
@@ -140,17 +142,8 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
-
-"""Email Server setup"""
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_USE_TLS = True
-EMAIL_HOST = os.getenv("EMAIL_HOST")
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-EMAIL_PORT = os.getenv("EMAIL_PORT")
-DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
-SERVER_EMAIL = EMAIL_HOST_USER
 
 """dj-rest-auth configuration inherited from allauth"""
 ACCOUNT_USERNAME_REQUIRED = False
@@ -158,17 +151,11 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_AUTHENTICATION_METHOD = "email"
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_CONFIRM_EMAIL_ON_GET = False
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 OLD_PASSWORD_FIELD_ENABLED = True
 # ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
-
-"""Redirect user to client-side login page after Email confirmation"""
-ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = f"{os.getenv('CLIENT_SITE')}/login"
-ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = (
-    f"{os.getenv('CLIENT_SITE')}/login"
-)
 
 SITE_ID = 1
 
@@ -188,4 +175,17 @@ JWT_AUTH_COOKIE = "atok"
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=14),
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Magpie Data Platform API",
+    "LICENSE": {"name": "MIT"},
+    "VERSION": "1.0.0",
+    "SCHEMA_PATH_PREFIX": r"/api/v[0-9]",
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "persistAuthorization": True,
+        "displayOperationId": True,
+    },
+    "SWAGGER_UI_DIST": "//unpkg.com/swagger-ui-dist@3.35.1",
 }
