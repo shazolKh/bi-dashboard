@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm, LicenseForm
-from .models import CustomUser, Profile, License, UserLicense, LoginEntry, Feedback
+from .models import CustomUser, Profile, License, UserLicense, LoginEntry, Feedback, PasswordReset
 
 
 @admin.register(CustomUser)
@@ -325,3 +325,18 @@ class LoginEntryAdmin(admin.ModelAdmin):
         return instance.user.email
 
     get_email.short_description = "Email"
+
+
+@admin.register(PasswordReset)
+class PasswordResetAdmin(admin.ModelAdmin):
+    model = PasswordReset
+    list_display = (
+        "user",
+        'phone_no',
+        "otp_code",
+        'verified',
+        "created_at",
+        "last_otp_time",
+    )
+    search_fields = ('user', 'phone_no')
+

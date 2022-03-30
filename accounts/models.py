@@ -1,7 +1,6 @@
 import uuid
 from django.db import models
 from django.conf import settings
-from django.utils import timezone
 from django.core.validators import RegexValidator
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
@@ -180,6 +179,28 @@ class LoginEntry(models.Model):
     class Meta:
         verbose_name = _("Login Entry")
         verbose_name_plural = _("Login Entries")
+
+    def __str__(self):
+        return self.user.email
+
+
+class PasswordReset(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.OneToOneField(
+        CustomUser,
+        verbose_name=_("User"),
+        on_delete=models.CASCADE,
+    )
+    phone_no = models.CharField(_("Phone Number"), max_length=20, null=True, blank=True)
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    otp_code = models.CharField(_("OTP Code"), max_length=6, blank=False)
+    verified = models.BooleanField(_("Is Verified"), default=False)
+    last_otp_time = models.DateTimeField(_("Last OTP time"), auto_now=True)
+
+    class Meta:
+        verbose_name = _("Password Reset")
+        verbose_name_plural = _("Password Resets")
 
     def __str__(self):
         return self.user.email
