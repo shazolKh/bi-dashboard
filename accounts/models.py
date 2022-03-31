@@ -1,6 +1,5 @@
 import uuid
 from django.db import models
-from django.conf import settings
 from django.core.validators import RegexValidator
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
@@ -40,13 +39,13 @@ class Profile(models.Model):
     """
 
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True
+        CustomUser, on_delete=models.CASCADE, primary_key=True
     )
     phone_regex = RegexValidator(
         regex=r"^\+(?:[0-9] ?){6,14}[0-9]$",
         message="Invalid Phone Number",
     )
-    phone_no = models.CharField(validators=[phone_regex], max_length=17, blank=True)
+    phone_no = models.CharField(validators=[phone_regex], max_length=17, blank=True, unique=True)
 
     """Optional Fields"""
     org_name = models.CharField(_("Organization"), max_length=255, blank=True)
@@ -69,7 +68,7 @@ class Feedback(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, verbose_name=_("User"), on_delete=models.CASCADE
+        CustomUser, verbose_name=_("User"), on_delete=models.CASCADE
     )
     subject = models.TextField(_("Subject"))
     description = models.TextField(_("Description"))
@@ -116,7 +115,7 @@ class UserLicense(models.Model):
     """
 
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True
+        CustomUser, on_delete=models.CASCADE, primary_key=True
     )
     assigned_license = models.ForeignKey(
         License,
@@ -167,7 +166,7 @@ class LoginEntry(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, verbose_name=_("User"), on_delete=models.CASCADE
+        CustomUser, verbose_name=_("User"), on_delete=models.CASCADE
     )
     timestamp = models.DateTimeField(_("Login Timestamop"), auto_now_add=True)
     ip_address = models.GenericIPAddressField(
