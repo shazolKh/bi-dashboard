@@ -120,10 +120,11 @@ class LoginSerializer(LoginSerializer):
     def validate(self, attrs):
         user = super().validate(attrs)
         request = self.context.get("request")
+        email = Profile.objects.get(phone_no=request.data['phone_no']).user.email
         login_signal.send(
             sender=CustomUser,
             request=request,
-            user_email=request.data["email"],
+            user_email=email,
         )
         return user
 

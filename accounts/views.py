@@ -20,7 +20,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework_simplejwt.settings import api_settings as jwt_settings
 
-from dj_rest_auth.views import LogoutView, PasswordResetView
+from dj_rest_auth.views import LogoutView, PasswordResetView, LoginView
 
 from .models import Profile, UserLicense, CustomUser, PasswordReset
 from .serializers import (
@@ -187,7 +187,6 @@ class InitPasswordResetAPIView(generics.GenericAPIView):
                 return Response(
                     data={
                         "message": "Password reset code updated.",
-                        'phone_no': f"{phone_no[:6]}*****{phone_no[-3:]}",
                     },
                     status=status.HTTP_200_OK,
                 )
@@ -200,7 +199,6 @@ class InitPasswordResetAPIView(generics.GenericAPIView):
                 return Response(
                     data={
                         "message": "Password reset code created.",
-                        'phone_no': f"{phone_no[:6]}*****{phone_no[-3:]}",
                     },
                     status=status.HTTP_201_CREATED,
                 )
@@ -211,12 +209,12 @@ class InitPasswordResetAPIView(generics.GenericAPIView):
             )
 
     def post(self, request, *args, **kwargs):
-        email = request.data.get("email")
+        phone_no = request.data.get("phone_no")
 
-        if email:
+        if phone_no:
             try:
+                email = Profile.objects.get(phone_no=phone_no).user.email
                 user = CustomUser.objects.get(email=email)
-                phone_no = Profile.objects.get(user=user).phone_no
                 PasswordReset.objects.get(user=user)
 
                 return self.handle_passwordreset(
@@ -259,11 +257,11 @@ class VerifyPasswordResetAPIView(APIView):
     def post(self, request, *args, **kwargs):
 
         otp_code = request.data.get("otp_code")
-        email = request.data.get("email")
+        phone_no = request.data.get("phone_no")
 
-        if email and otp_code:
+        if phone_no and otp_code:
             try:
-                pass_reset = PasswordReset.objects.get(user__email=email)
+                pass_reset = PasswordReset.objects.get(phone_no=phone_no)
                 if otp_code == pass_reset.otp_code:
                     pass_reset.verified = True
                     pass_reset.otp_code = -1
@@ -309,11 +307,12 @@ class PasswordResetAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         new_password = request.data.get("new_password")
-        email = request.data.get("email")
+        phone_no = request.data.get("phone_no")
 
-        if new_password and email:
+        if new_password and phone_no:
             try:
-                pass_reset = PasswordReset.objects.get(user__email=email)
+                pass_reset = PasswordReset.objects.get(phone_no=phone_no)
+                email = Profile.objects.get(phone_no=phone_no).user.email
                 if pass_reset.verified:
                     user = CustomUser.objects.get(email=email)
                     user.set_password(new_password)
@@ -344,3 +343,22 @@ class PasswordResetAPIView(APIView):
                 data={"message": "Invalid request format."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class CustomLoginView(LoginView):
+    """
+    Custom Login View.
+    """
+
+    def post(self, request, *args, **kwargs):
+        self.request = request
+        email = Profile.objects.get(phone_no=self.request.data['phone_no']).user.email
+        data = {
+            'email': email,
+            'password': request.data['password']
+        }
+        self.serializer = self.get_serializer(data=data)
+        self.serializer.is_valid(raise_exception=True)
+
+        self.login()
+        return self.get_response()

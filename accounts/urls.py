@@ -2,7 +2,6 @@ from django.conf import settings
 from django.urls import path, include
 
 from dj_rest_auth.views import (
-    LoginView,
     PasswordChangeView,
     UserDetailsView,
 )
@@ -19,6 +18,7 @@ from .views import (
     InitPasswordResetAPIView,
     PasswordResetAPIView,
     VerifyPasswordResetAPIView,
+    CustomLoginView,
 )
 
 app_name = "accounts"
@@ -31,7 +31,7 @@ urlpatterns = [
         name="retrieve_phone",
     ),
     path("registration/", RegisterView.as_view(), name="rest_register"),
-    path("login/", LoginView.as_view(), name="rest_login"),
+    path("login/", CustomLoginView.as_view(), name="rest_login"),
     path("logout/", CustomLogoutView.as_view(), name="rest_logout"),
     path("password/reset/", CustomPasswordResetView.as_view(), name="rest_password_reset"),
 
